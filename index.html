@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вводная схема электроснабжения дома</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --panel: #ffffff;
+    --ink: #1c2530;
+    --muted: #5b6b7d;
+    --line: #d4dce4;
+    --shu: #2f5f8f;
+    --shu-bg: #e8f0f8;
+    --kotel: #b8631a;
+    --kotel-bg: #fbf0e3;
+    --dom: #1e7a5a;
+    --dom-bg: #e6f4ee;
+    --future: #7d8894;
+    --accent: #2563eb;
+    --vvod: #7a5fa0;
+    --vvod-bg: #f0eaf7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  header {
+    max-width: 1760px; margin: 0 auto; padding: 32px 24px 8px;
+  }
+  header h1 { font-size: 26px; letter-spacing: -0.02em; }
+  header p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+
+  .agenda {
+    max-width: 1760px; margin: 20px auto; padding: 0 24px;
+  }
+  .agenda-inner {
+    background: linear-gradient(135deg, #1c2530, #2c3a4d);
+    color: #eef2f7; border-radius: 14px; padding: 22px 26px;
+    box-shadow: 0 6px 24px rgba(28,37,48,.18);
+  }
+  .agenda-inner h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: #8fb4dd; margin-bottom: 12px; }
+  .agenda-inner ol { padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
+  .agenda-inner b { color: #ffd591; }
+
+  .layout {
+    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
+    display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 24px;
+    align-items: start;
+  }
+  .scheme-card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px; overflow-x: auto;
+  }
+  svg { display: block; min-width: 900px; width: 100%; height: auto; }
+
+  .node { cursor: pointer; transition: filter .18s ease; }
+  .node:hover { filter: brightness(1.06) drop-shadow(0 3px 6px rgba(0,0,0,.18)); }
+  .node.selected rect.box { stroke-width: 3.5; }
+  .node .num { font-weight: 700; }
+  .node text { pointer-events: none; }
+
+  .flow {
+    stroke: #9aa8b6; stroke-width: 2.5; fill: none;
+    stroke-dasharray: 7 6;
+    animation: dashmove 1.6s linear infinite;
+  }
+  .flow.future { stroke: var(--future); stroke-dasharray: 4 5; }
+  @keyframes dashmove { to { stroke-dashoffset: -13; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  aside.detail {
+    position: sticky; top: 20px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px;
+    min-height: 300px;
+    box-shadow: 0 4px 16px rgba(28,37,48,.06);
+  }
+  aside.detail h3 { font-size: 18px; margin-bottom: 4px; }
+  aside.detail .tagline { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
+  aside.detail dl { display: grid; gap: 12px; font-size: 14.5px; }
+  aside.detail dt {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--accent); font-weight: 700; margin-bottom: 2px;
+  }
+  aside.detail .badge {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; color: #fff;
+  }
+  .hint { color: var(--muted); font-size: 13px; margin-top: 18px; }
+
+  footer {
+    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.detail { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Вводная схема электроснабжения дома</h1>
+  <p>15 кВт, 3 фазы, подземный ввод · котёл Thermex Boss 12 (380В) + БКН STOUT · резерв — однофазный генератор</p>
+</header>
+
+<section class="agenda">
+  <div class="agenda-inner">
+    <h2>Общая идея</h2>
+    <ol>
+      <li><b>Котёл — напрямую к трём фазам.</b> Это единственная трёхфазная нагрузка и единственная, которой не нужна стабилизация: ТЭНам качество напряжения безразлично. Котёл идёт мимо стабилизатора.</li>
+      <li><b>Весь дом — на одной стабилизированной фазе.</b> Инверторный стабилизатор «3 в 1» равномерно грузит все три фазы и выдаёт одну чистую фазу: балансировка фаз не нужна вообще, качество сети в строящемся посёлке не страшно.</li>
+      <li><b>Резерв — тривиальный.</b> Однофазный инверторный генератор подключается одной розеткой в готовый перекидной рубильник. Коммутация делается сейчас, генератор покупается позже.</li>
+    </ol>
+  </div>
+</section>
+
+<div class="layout">
+  <div class="scheme-card">
+    <svg viewBox="0 0 1520 1580" role="img" aria-label="Однолинейная схема ввода">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#9aa8b6"></path>
+        </marker>
+      </defs>
+
+      <!-- Зоны -->
+      <rect x="400" y="8" width="500" height="480" rx="16" fill="var(--shu-bg)" opacity="0.55"></rect>
+      <text x="650" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="var(--shu)">ЩУ НА УЛИЦЕ (металлический)</text>
+
+      <rect x="380" y="492" width="540" height="136" rx="16" fill="var(--vvod-bg)" opacity="0.6"></rect>
+      <text x="396" y="510" font-size="14" font-weight="700" fill="var(--vvod)">ВВОД В ДОМ (гильза в ростверке)</text>
+
+      <rect x="40" y="656" width="560" height="556" rx="16" fill="var(--kotel-bg)" opacity="0.6"></rect>
+      <text x="56" y="680" font-size="14" font-weight="700" fill="var(--kotel)">ВЕТКА А — КОТЁЛ (без стабилизатора)</text>
+
+      <rect x="660" y="656" width="600" height="910" rx="16" fill="var(--dom-bg)" opacity="0.55"></rect>
+      <text x="676" y="680" font-size="14" font-weight="700" fill="var(--dom)">ВЕТКА Б — ДОМ (стабилизированная фаза)</text>
+
+      <!-- Потоки: магистраль -->
+      <path class="flow" d="M650 120 L650 152" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M650 240 L650 272" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M650 360 L650 392" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M650 480 L650 512" marker-end="url(#arrow)"></path>
+      <!-- Развилка -->
+      <path class="flow" d="M650 600 L650 636 L320 636 L320 680" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M650 636 L960 636 L960 680" marker-end="url(#arrow)"></path>
+      <!-- Ветка А -->
+      <path class="flow" d="M320 776 L320 810" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M320 906 L320 940" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M320 1036 L320 1070" marker-end="url(#arrow)"></path>
+      <!-- Ветка Б -->
+      <path class="flow" d="M960 776 L960 810" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M960 906 L960 940" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M960 1036 L960 1070" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M960 1166 L960 1200" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M960 1296 L960 1330" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M960 1426 L960 1460" marker-end="url(#arrow)"></path>
+      <!-- Генератор -->
+      <path class="flow future" d="M1360 1078 L1360 992 L1198 992" marker-end="url(#arrow)"></path>
+
+      <!-- Узлы создаются скриптом -->
+      <g id="nodes"></g>
+    </svg>
+  </div>
+
+  <aside class="detail" id="detail">
+    <div class="hint">Кликните по узлу схемы — здесь появятся детали: что это, зачем нужно, наименование и номиналы.</div>
+  </aside>
+</div>
+
+<footer>
+  Схема носит проектный характер — перед реализацией сверяйтесь с действующими СП/ПУЭ и требованиями сетевой организации.
+</footer>
+
+<script>
+const NODES = [
+  // --- Магистраль / ЩУ ---
+  { id:1, x:650, y:76,  w:440, zone:"shu",
+    title:"Вводной автомат 25А 3P",
+    tag:"Рубеж выделенной мощности",
+    short:"Ограничивает потребление по техусловиям (15 кВт) и защищает вводной кабель",
+    name:"Автоматический выключатель 3P 25А, характеристика C, в металлическом ЩУ",
+    spec:"25А на фазу = потолок 15 кВт по ТУ. Размещение (опора/фасад) диктует сетевая организация.",
+    why:"Всё, что дальше, считается от этого номинала: котёл на 12 кВт съедает 18,1А/фазу, дому остаётся ~7А/фазу — поэтому ниже по схеме стоит реле приоритета." },
+  { id:2, x:650, y:196, w:440, zone:"shu",
+    title:"Счётчик",
+    tag:"Коммерческий учёт",
+    short:"Трёхфазный прибор учёта — по требованиям сетевой организации",
+    name:"Трёхфазный счётчик (модель и класс — по сетевой)",
+    spec:"Часто выносится на фасад или опору — уточнить при получении ТУ.",
+    why:"Его положение определяет, где физически заканчивается зона сетевой и начинается наш ЩУ." },
+  { id:3, x:650, y:316, w:440, zone:"shu",
+    title:"УЗИП класс I+II",
+    tag:"Гроза и импульсы",
+    short:"Отводит грозовые и коммутационные перенапряжения на землю",
+    name:"Устройство защиты от импульсных перенапряжений, класс I+II",
+    spec:"Ставится в металлическом уличном ЩУ, до захода кабеля в дом. Вторая ступень — класс II в домашнем щите (узел 14).",
+    why:"При срабатывании через УЗИП уходят килоамперы — в пластиковом боксе внутри дома это риск возгорания." },
+  { id:4, x:650, y:436, w:440, zone:"shu",
+    title:"ГЗШ: PEN → PE + N + контур",
+    tag:"Система TN-C-S",
+    short:"Разделение PEN на защитный и рабочий проводники, повторное заземление",
+    name:"Главная заземляющая шина; контур — оцинкованные/омеднённые электроды",
+    spec:"Грунты участка высокоагрессивны к углеродистой стали (отчёт ИГИ) — чёрный металл не применять.",
+    why:"Отсюда по дому идут раздельные PE и N. Сопротивление контура — замерить после монтажа." },
+  { id:5, x:650, y:556, w:440, zone:"vvod",
+    title:"УЗО селективное 100–300 мА",
+    tag:"Противопожарная защита",
+    short:"Защищает всю вводную часть от утечек, тип S (селективное)",
+    name:"УЗО 100–300 мА, тип S — в вводном щите в доме, до разветвления на ветки",
+    spec:"Селективность с групповыми УЗО 30 мА: при аварии отключится группа, а не весь дом. Ввод в дом — подземный, в герметичной гильзе через ростверк: грунты пучинистые, есть верховодка. Здесь же, на вводных фазах до разветвления на ветки, — три трансформатора тока реле приоритета (узел 8).",
+    why:"Это не замена рабочим УЗО на группах — слои защиты разные: пожарный и персональный. В доме, а не на опоре: УЗО не любит мороз и влагу, а обслуживать удобнее изнутри." },
+
+  // --- Ветка А: котёл ---
+  { id:6, x:320, y:732, w:440, zone:"kotel",
+    title:"Реле напряжения 3-фазное",
+    tag:"Защита всего котла",
+    short:"Контроль обрыва нуля, перекоса и чередования фаз",
+    name:"Трёхфазное реле напряжения (управляет контактором, узел 8)",
+    spec:"Реагирует на: обрыв N, асимметрию фаз, выход за пороги, неверное чередование. При аварии контактор обесточивает котёл целиком.",
+    why:"У Boss 12 одна клеммная коробка: плата, насос и Wi-Fi питаются внутри от того же ввода (мануал, рис. 17/18) — раздельно запитать электронику нельзя. РН защищает и ТЭНы, и электронику, но только полным отключением." },
+  { id:7, x:320, y:862, w:440, zone:"kotel",
+    title:"Автомат 20А 3P + УЗО 30 мА",
+    tag:"Защита линии котла",
+    short:"Коммутация и дифференциальная защита ветки котла",
+    name:"Автомат 3P 20А + УЗО 30 мА (или дифавтомат 20А)",
+    spec:"20А правильно защищает линию под рабочий ток 18,1А/фазу.",
+    why:"Отдельная ветка — отдельная защита: авария в котле не гасит дом и наоборот." },
+  { id:8, x:320, y:992, w:440, zone:"kotel",
+    title:"Контактор + реле приоритета",
+    tag:"Антиперегруз ввода",
+    short:"РН рвёт силовое питание при аварии; приоритет действует через термостатный вход",
+    name:"Контактор (управляется РН, узел 6) + трёхфазное реле приоритета с тремя ТТ на вводных фазах",
+    spec:"Приоритет размыкает вход проводного термостата котла (сухой контакт NC, PF=01): котёл штатно прекращает нагрев, а плата, насос, Wi-Fi и антизамерзание продолжают работать. Силовое питание котла приоритетом не рвём — это обесточило бы его целиком. В эту же цепь последовательно встанет контакт «запрос тепла» зональной автоматики пола (7 зон).",
+    why:"Духовка + чайник + фен не выбьют вводной автомат: ТЭНы молчат минуты — дом не заметит, у отопления огромная инерция." },
+  { id:9, x:320, y:1122, w:440, zone:"kotel",
+    title:"Котёл Thermex Boss 12 Wi-Fi",
+    tag:"Отопление: тёплый пол ~100 м²",
+    short:"Электрокотёл 380В, ступени 2/4/6/8/10/12 кВт",
+    name:"Thermex Boss 12 Wi-Fi, подключение L1-L2-L3-N-PE (без перемычек)",
+    spec:"12 кВт на 380В = 18,1А/фазу. Кабель 5×4 мм²: 2,5 мм² нормативно допустимо, но 4 мм² даёт запас на длительную зимнюю нагрузку.",
+    why:"Единственная трёхфазная нагрузка и единственная, которой не нужна стабилизация — поэтому до стабилизатора. Зимой реально живёт на 6–8 кВт. Плата, насос и Wi-Fi питаются внутри от общего ввода (мануал, рис. 14, 17/18) — раздельного питания электроники нет." },
+
+  // --- Ветка Б: дом ---
+  { id:10, x:960, y:732, w:460, zone:"dom",
+    title:"Штиль IS3120RT (3 в 1)",
+    tag:"Сердце схемы",
+    short:"Инверторный стабилизатор: вход 3 фазы → выход 1 чистая фаза",
+    name:"Штиль ИнСтаб IS3120RT, 20 кВА / 16 кВт, двойное преобразование",
+    spec:"Вход: 165–310В, равномерно до 35А/фазу. Выход: 220В ±2%, до 91А. КПД 97%.",
+    why:"Весь дом однофазный — балансировка фаз не нужна вообще; просевшая сеть посёлка (когда все заселятся) не страшна." },
+  { id:11, x:960, y:862, w:460, zone:"dom",
+    title:"Ремонтный байпас",
+    tag:"Обход стабилизатора",
+    short:"Кулачковый переключатель «сеть / 0 / Штиль» при отказе стабилизатора",
+    name:"Кулачковый переключатель 3-позиционный 32А",
+    spec:"У Штиля есть только электронный автобайпас — при полной гибели аппарата он не поможет. Номинала 32А достаточно: в режиме байпаса дом сидит на одной фазе ввода, ограниченной вводным автоматом 25А (~5,5 кВт).",
+    why:"Зимой дом отапливается электричеством: единая точка отказа без обхода недопустима. Кулачковый механизм невозможно переключить случайным щелчком по щиту." },
+  { id:12, x:960, y:992, w:460, zone:"dom",
+    title:"Рубильник 1-0-2, 100А",
+    tag:"Сеть / генератор",
+    short:"Перекидной рубильник: сеть — выкл — генератор",
+    name:"Реверсивный рубильник 1-0-2, 100А, механическая блокировка",
+    spec:"Номинал с запасом: после стабилизатора ток до ~75А (16 кВт на одной фазе). Кабель дальше — 16 мм².",
+    why:"Положение «2» — генератор идёт мимо стабилизатора: у него своя автоматическая регулировка напряжения, гнать его напряжение через стабилизатор не нужно." },
+  { id:13, x:1360, y:1122, w:280, zone:"future",
+    title:"Розетка генератора",
+    tag:"Заготовка под резерв",
+    short:"Силовая розетка снаружи дома; генератор — позже",
+    name:"Силовая розетка-ввод 32А + кабель к рубильнику (узел 12)",
+    spec:"Генератор: инверторный 1ф, 6–8 кВт — покупается позже. Коммутация готова сейчас.",
+    why:"В текущей конфигурации котёл от генератора не работает. Запасной ход на будущее: по мануалу котёл допускает однофазное питание до 8 кВт (перемычки L1-L2-L3 в клеммной коробке + DIP-переключатель мощности на плате), решение — при покупке генератора." },
+  { id:14, x:960, y:1122, w:460, zone:"dom",
+    title:"ГРЩ: УЗИП II + шины",
+    tag:"Домашний щит",
+    short:"Вторая ступень УЗИП, силовые шины, запас модулей",
+    name:"УЗИП класс II + шины на 75А+, щит с запасом 25–30% модулей",
+    spec:"Вторая ступень догоняет остатки импульса, дошедшие по кабелю от УЗИП I+II.",
+    why:"Опыт: свободные модули заканчиваются в первый же год. Шины N и PE — на изоляторах, на полный ток ввода, с запасом отверстий: вместо бытовой шины Navigator в корпусе на 7 отверстий — после стабилизатора по нейтрали идёт до ~75А, а линий в доме заведомо больше семи." },
+  { id:15, x:960, y:1252, w:460, zone:"dom",
+    title:"Неотключаемая группа",
+    tag:"Живёт и на генераторе",
+    short:"Отдельное УЗО 30 мА: критичные потребители",
+    name:"УЗО 30 мА + автоматы: холодильник, роутер, охрана, насосы и автоматика зон тёплого пола, водоочистка, септик",
+    spec:"Септик: отдельный автомат 10А, кабель 3×1,5 до горловины (компрессор 55–65 Вт, 24/7). Плата котла сюда не входит — она питается внутри котла от ветки А.",
+    why:"Насосы тёплого пола гоняют остаточное тепло и спасают от разморозки; септик без воздуха деградирует за сутки." },
+  { id:16, x:960, y:1382, w:460, zone:"dom",
+    title:"Групповые линии",
+    tag:"Розетки, свет, техника",
+    short:"УЗО 30 мА на группы, 10 мА — влажные зоны",
+    name:"Автоматы: свет 10А (3×1,5), розетки 16А (3×2,5), отдельные линии: кухня, кондиционеры, насос скважины",
+    spec:"Свет отделён от розеток; ванные — УЗО 10 мА.",
+    why:"Селективность с вводным УЗО типа S: при аварии отключится только проблемная группа." },
+  { id:17, x:960, y:1512, w:460, zone:"dom",
+    title:"Резерв: ТЭН БКН STOUT",
+    tag:"ГВС без котла",
+    short:"Линия под опциональный ТЭН 2–3 кВт в бойлере",
+    name:"Линия 3×2,5, автомат 16А — под ТЭН 2–3 кВт (опция STOUT)",
+    spec:"Отключаемая при резерве линия: на генераторе включается только вручную.",
+    why:"2–3 кВт — треть мощности будущего генератора, автоматически на него вешать нельзя." },
+];
+
+const ZONES = {
+  shu:   { fill:"#2f5f8f", label:"ЩУ" },
+  vvod:  { fill:"#7a5fa0", label:"Ввод" },
+  kotel: { fill:"#b8631a", label:"Котёл" },
+  dom:   { fill:"#1e7a5a", label:"Дом" },
+  future:{ fill:"#7d8894", label:"Позже" },
+};
+
+const svgNS = "http://www.w3.org/2000/svg";
+const g = document.getElementById("nodes");
+const BOX_H = 88;
+
+function wrap(text, max) {
+  const words = text.split(" ");
+  const lines = []; let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > max) { lines.push(cur.trim()); cur = w; }
+    else cur += " " + w;
+  }
+  if (cur.trim()) lines.push(cur.trim());
+  return lines;
+}
+
+NODES.forEach(n => {
+  const h = BOX_H;
+  const grp = document.createElementNS(svgNS, "g");
+  grp.setAttribute("class", "node");
+  grp.dataset.id = n.id;
+
+  const rect = document.createElementNS(svgNS, "rect");
+  rect.setAttribute("class", "box");
+  rect.setAttribute("x", n.x - n.w/2);
+  rect.setAttribute("y", n.y - h/2);
+  rect.setAttribute("width", n.w);
+  rect.setAttribute("height", h);
+  rect.setAttribute("rx", 12);
+  rect.setAttribute("fill", "#ffffff");
+  rect.setAttribute("stroke", ZONES[n.zone].fill);
+  rect.setAttribute("stroke-width", 2);
+  if (n.zone === "future") rect.setAttribute("stroke-dasharray", "6 4");
+  grp.appendChild(rect);
+
+  const badge = document.createElementNS(svgNS, "circle");
+  badge.setAttribute("cx", n.x - n.w/2 + 26);
+  badge.setAttribute("cy", n.y - h/2 + 27);
+  badge.setAttribute("r", 17);
+  badge.setAttribute("fill", ZONES[n.zone].fill);
+  grp.appendChild(badge);
+
+  const num = document.createElementNS(svgNS, "text");
+  num.setAttribute("class", "num");
+  num.setAttribute("x", n.x - n.w/2 + 26);
+  num.setAttribute("y", n.y - h/2 + 33);
+  num.setAttribute("text-anchor", "middle");
+  num.setAttribute("font-size", "16");
+  num.setAttribute("fill", "#ffffff");
+  num.textContent = n.id;
+  grp.appendChild(num);
+
+  const title = document.createElementNS(svgNS, "text");
+  title.setAttribute("x", n.x - n.w/2 + 52);
+  title.setAttribute("y", n.y - h/2 + 33);
+  title.setAttribute("font-size", "17");
+  title.setAttribute("font-weight", "700");
+  title.setAttribute("fill", "#1c2530");
+  title.textContent = n.title;
+  grp.appendChild(title);
+
+  const subLines = wrap(n.short, Math.max(16, Math.floor((n.w - 84) / 7.3))).slice(0, 2);
+  subLines.forEach((line, i) => {
+    const sub = document.createElementNS(svgNS, "text");
+    sub.setAttribute("x", n.x - n.w/2 + 52);
+    sub.setAttribute("y", n.y - h/2 + 55 + i*17);
+    sub.setAttribute("font-size", "13");
+    sub.setAttribute("fill", "#5b6b7d");
+    sub.textContent = line;
+    grp.appendChild(sub);
+  });
+
+  grp.addEventListener("click", () => select(n.id));
+  g.appendChild(grp);
+});
+
+function select(id) {
+  document.querySelectorAll(".node").forEach(el => el.classList.remove("selected"));
+  const el = document.querySelector(`.node[data-id="${id}"]`);
+  if (el) el.classList.add("selected");
+  const n = NODES.find(v => v.id === id);
+  const z = ZONES[n.zone];
+  document.getElementById("detail").innerHTML = `
+    <span class="badge" style="background:${z.fill}">${n.id} · ${z.label}</span>
+    <h3>${n.title}</h3>
+    <div class="tagline">${n.tag}</div>
+    <dl>
+      <div><dt>Что это и зачем</dt><dd>${n.short}</dd></div>
+      <div><dt>Наименование</dt><dd>${n.name}</dd></div>
+      <div><dt>Номиналы / мощность</dt><dd>${n.spec}</dd></div>
+      <div><dt>Почему так</dt><dd>${n.why}</dd></div>
+    </dl>
+    <div class="hint">Клик по другому узлу — следующие детали.</div>`;
+  if (window.innerWidth <= 980) {
+    document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+// Стартовый выбор — сердце схемы
+select(10);
+</script>
+</body>
+</html>
