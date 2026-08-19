@@ -738,13 +738,13 @@
           </div>
         </div>
         <div class="zones">
-          <span class="zone">Кухня-гостиная</span>
-          <span class="zone">Спальня 1</span>
-          <span class="zone">Спальня 2</span>
-          <span class="zone">Кабинет</span>
-          <span class="zone">Санузел</span>
-          <span class="zone">Коридор</span>
-          <span class="zone">Котельная</span>
+          <span class="zone">Контур 01</span>
+          <span class="zone">Контур 02</span>
+          <span class="zone">Контур 03</span>
+          <span class="zone">Контур 04</span>
+          <span class="zone">Контур 05</span>
+          <span class="zone">Контур 06</span>
+          <span class="zone">Контур 07</span>
         </div>
       </div>
       <figure class="photo-card reveal">
@@ -867,13 +867,19 @@
     /* hero-заголовок: пословный подъём */
     var h1 = document.getElementById("heroTitle");
     if (h1) {
-      h1.innerHTML = h1.innerHTML.replace(/(<span class="grad-text">|<\/span>)/g, "$1")
-        .split(/(\s+||)/).filter(function (s) { return s.trim() !== ""; })
-        .map(function (s) {
-          if (s === "") return '<span class="grad-text">';
-          if (s === "") return "</span>";
-          return '<span class="w">' + s + "</span>";
-        }).join(" ");
+      var frag = document.createDocumentFragment();
+      Array.prototype.slice.call(h1.childNodes).forEach(function (node) {
+        var isGrad = node.nodeType === 1 && node.classList.contains("grad-text");
+        node.textContent.split(/\s+/).filter(Boolean).forEach(function (word) {
+          var s = document.createElement("span");
+          s.className = isGrad ? "w grad-text" : "w";
+          s.textContent = word;
+          frag.appendChild(s);
+          frag.appendChild(document.createTextNode(" "));
+        });
+      });
+      h1.innerHTML = "";
+      h1.appendChild(frag);
       gsap.from("#heroTitle .w", { opacity: 0, y: 46, rotateX: -35, transformOrigin: "0 100%",
         duration: 1, ease: "power4.out", stagger: 0.07, delay: 0.15 });
     }
