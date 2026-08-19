@@ -3,427 +3,972 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Вводная схема электроснабжения дома</title>
+<title>Проект дома — инженерия одноэтажного дома</title>
+<meta name="description" content="Инженерные системы дома ~100 м²: электрика 15 кВт 3 фазы, тёплые полы, водоподготовка, септик Евролос — решения, цифры и роадмап проекта.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f6f9;
-    --panel: #ffffff;
-    --ink: #1c2530;
-    --muted: #5b6b7d;
-    --line: #d4dce4;
-    --shu: #2f5f8f;
-    --shu-bg: #e8f0f8;
-    --kotel: #b8631a;
-    --kotel-bg: #fbf0e3;
-    --dom: #1e7a5a;
-    --dom-bg: #e6f4ee;
-    --future: #7d8894;
-    --accent: #2563eb;
-    --vvod: #7a5fa0;
-    --vvod-bg: #f0eaf7;
+    --bg0: #06080d;
+    --bg1: #0b0f16;
+    --panel: rgba(255,255,255,.035);
+    --panel2: rgba(255,255,255,.06);
+    --line: rgba(255,255,255,.09);
+    --ink: #edf1f7;
+    --muted: #93a1b5;
+    --vio: #8b5cf6;
+    --cyan: #22d3ee;
+    --amber: #fbbf24;
+    --green: #34d399;
+    --grad: linear-gradient(92deg, var(--vio), var(--cyan));
+    --r: 20px;
+    --font-d: "Unbounded", system-ui, sans-serif;
+    --font-b: "Manrope", system-ui, -apple-system, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html.lenis { scroll-behavior: auto; height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
+    font-family: var(--font-b);
+    background: var(--bg0);
     color: var(--ink);
-    line-height: 1.55;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
-  header {
-    max-width: 1760px; margin: 0 auto; padding: 32px 24px 8px;
-  }
-  header h1 { font-size: 26px; letter-spacing: -0.02em; }
-  header p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+  ::selection { background: rgba(139,92,246,.45); }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
 
-  .agenda {
-    max-width: 1760px; margin: 20px auto; padding: 0 24px;
+  /* ---------- фоновые слои ---------- */
+  .noise {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .agenda-inner {
-    background: linear-gradient(135deg, #1c2530, #2c3a4d);
-    color: #eef2f7; border-radius: 14px; padding: 22px 26px;
-    box-shadow: 0 6px 24px rgba(28,37,48,.18);
+  .cursor-glow {
+    position: fixed; z-index: 0; width: 520px; height: 520px; border-radius: 50%;
+    pointer-events: none; left: 0; top: 0; transform: translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(139,92,246,.10), rgba(34,211,238,.05) 45%, transparent 70%);
+    display: none;
   }
-  .agenda-inner h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: #8fb4dd; margin-bottom: 12px; }
-  .agenda-inner ol { padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
-  .agenda-inner b { color: #ffd591; }
+  @media (pointer: fine) { .cursor-glow { display: block; } }
 
-  .layout {
-    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
-    display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 24px;
-    align-items: start;
+  /* ---------- навигация ---------- */
+  .nav {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+    z-index: 100; width: min(1080px, calc(100% - 32px));
   }
-  .scheme-card {
+  .nav-inner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 999px;
+    background: rgba(10,13,20,.62);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px rgba(0,0,0,.45);
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--font-d); font-size: 13px; font-weight: 600;
+    letter-spacing: .04em; padding: 6px 12px; text-decoration: none;
+    white-space: nowrap;
+  }
+  .brand svg { flex: none; }
+  .nav-tabs { display: flex; gap: 6px; margin-left: auto; }
+  .tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 999px; text-decoration: none;
+    font-size: 13.5px; font-weight: 700; color: var(--muted);
+    border: 1px solid transparent;
+    transition: color .25s, background .25s, border-color .25s;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--ink); background: var(--panel2); }
+  .tab.active {
+    color: #0a0d13; background: var(--grad);
+    box-shadow: 0 4px 18px rgba(139,92,246,.4);
+  }
+  @media (max-width: 560px) {
+    .brand span { display: none; }
+    .tab { padding: 8px 13px; font-size: 12.5px; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative; min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 24px 80px; overflow: hidden;
+  }
+  .hero-bg { position: absolute; inset: 0; z-index: -1; }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 30%, transparent 75%);
+  }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5;
+    will-change: transform;
+  }
+  .blob-1 {
+    width: 560px; height: 560px; left: -120px; top: -80px;
+    background: radial-gradient(circle, rgba(139,92,246,.55), transparent 65%);
+    animation: drift1 16s ease-in-out infinite alternate;
+  }
+  .blob-2 {
+    width: 520px; height: 520px; right: -140px; top: 12%;
+    background: radial-gradient(circle, rgba(34,211,238,.4), transparent 65%);
+    animation: drift2 19s ease-in-out infinite alternate;
+  }
+  .blob-3 {
+    width: 420px; height: 420px; left: 34%; bottom: -160px;
+    background: radial-gradient(circle, rgba(251,191,36,.22), transparent 65%);
+    animation: drift1 22s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes drift1 {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(70px,50px) scale(1.12); }
+  }
+  @keyframes drift2 {
+    from { transform: translate(0,0) scale(1.05); }
+    to   { transform: translate(-60px,70px) scale(.95); }
+  }
+  .hero-inner { width: min(1080px, 100%); margin: 0 auto; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel);
+  }
+  .kicker i {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+    box-shadow: 0 0 12px var(--green); animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .display {
+    font-family: var(--font-d); font-weight: 800;
+    font-size: clamp(40px, 8.2vw, 104px);
+    line-height: 1.02; letter-spacing: -0.015em;
+    margin: 26px 0 24px; text-wrap: balance;
+  }
+  .display .w { display: inline-block; }
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub {
+    max-width: 620px; font-size: clamp(16px, 2vw, 19px); color: var(--muted);
+  }
+  .hero-sub b { color: var(--ink); }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
+  .btn {
+    position: relative; display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 30px; border-radius: 999px; text-decoration: none;
+    font-weight: 800; font-size: 15px; letter-spacing: .01em;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+    will-change: transform;
+  }
+  .btn-grad { color: #0a0d13; background: var(--grad); box-shadow: 0 8px 30px rgba(139,92,246,.35); }
+  .btn-grad:hover { box-shadow: 0 12px 40px rgba(34,211,238,.45); }
+  .btn-ghost { color: var(--ink); border: 1px solid var(--line); background: var(--panel); }
+  .btn-ghost:hover { border-color: rgba(255,255,255,.25); }
+  .hero-stats {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 56px;
+  }
+  .chip {
+    padding: 12px 20px; border-radius: 16px; border: 1px solid var(--line);
+    background: var(--panel); backdrop-filter: blur(8px);
+    font-size: 14px; color: var(--muted);
+  }
+  .chip b {
+    display: block; font-family: var(--font-d); font-size: 19px;
+    font-weight: 600; color: var(--ink); margin-bottom: 2px;
+  }
+  .scroll-hint {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    color: var(--muted); font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .scroll-hint::after {
+    content: ""; width: 1px; height: 44px;
+    background: linear-gradient(var(--cyan), transparent);
+    animation: drip 1.8s ease-in-out infinite;
+  }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 55% { transform: scaleY(1); transform-origin: top; } 56% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  /* ---------- marquee ---------- */
+  .marquee {
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    overflow: hidden; padding: 18px 0; background: var(--bg1);
+    position: relative; z-index: 2;
+  }
+  .marquee-track {
+    display: flex; gap: 44px; width: max-content;
+    animation: mq 30s linear infinite;
+  }
+  .marquee span {
+    font-family: var(--font-d); font-size: 14px; font-weight: 400;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 44px; white-space: nowrap;
+  }
+  .marquee em { font-style: normal; color: var(--cyan); }
+  @keyframes mq { to { transform: translateX(-50%); } }
+
+  /* ---------- секции ---------- */
+  .section { position: relative; padding: clamp(80px, 11vw, 150px) 24px; z-index: 2; }
+  .wrap { width: min(1080px, 100%); margin: 0 auto; }
+  .sec-head { margin-bottom: clamp(40px, 6vw, 70px); }
+  .sec-tag {
+    font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--cyan); display: inline-flex; align-items: center; gap: 10px;
+  }
+  .sec-tag::before { content: ""; width: 26px; height: 1px; background: var(--grad); }
+  .sec-title {
+    font-family: var(--font-d); font-weight: 600;
+    font-size: clamp(28px, 4.6vw, 52px); line-height: 1.1;
+    margin-top: 16px; letter-spacing: -0.01em; text-wrap: balance;
+  }
+  .sec-sub { color: var(--muted); max-width: 640px; margin-top: 16px; font-size: 16.5px; }
+
+  /* ---------- цифры ---------- */
+  .nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .num-card {
+    padding: 30px 26px; border-radius: var(--r);
     background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; padding: 16px; overflow-x: auto;
+    transition: border-color .3s, transform .3s;
   }
-  svg { display: block; min-width: 900px; width: 100%; height: auto; }
-
-  .node { cursor: pointer; transition: filter .18s ease; }
-  .node:hover { filter: brightness(1.06) drop-shadow(0 3px 6px rgba(0,0,0,.18)); }
-  .node.selected rect.box { stroke-width: 3.5; }
-  .node .num { font-weight: 700; }
-  .node text { pointer-events: none; }
-
-  .flow {
-    stroke: #9aa8b6; stroke-width: 2.5; fill: none;
-    stroke-dasharray: 7 6;
-    animation: dashmove 1.6s linear infinite;
+  .num-card:hover { border-color: rgba(139,92,246,.5); transform: translateY(-4px); }
+  .num {
+    font-family: var(--font-d); font-weight: 800; font-size: clamp(34px, 4.4vw, 56px);
+    line-height: 1; background: var(--grad);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .flow.future { stroke: var(--future); stroke-dasharray: 4 5; }
-  @keyframes dashmove { to { stroke-dashoffset: -13; } }
-  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  .num small { font-size: .45em; font-weight: 600; }
+  .num-label { color: var(--muted); font-size: 13.5px; margin-top: 12px; }
+  @media (max-width: 860px) { .nums { grid-template-columns: repeat(2, 1fr); } }
 
-  aside.detail {
-    position: sticky; top: 20px;
+  /* ---------- системы ---------- */
+  .sys-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .sys-card {
+    grid-column: span 2; position: relative; overflow: hidden;
+    padding: 30px 28px; border-radius: var(--r);
     background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; padding: 20px;
-    min-height: 300px;
-    box-shadow: 0 4px 16px rgba(28,37,48,.06);
+    transition: border-color .3s, background .3s;
+    transform-style: preserve-3d; will-change: transform;
   }
-  aside.detail h3 { font-size: 18px; margin-bottom: 4px; }
-  aside.detail .tagline { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
-  aside.detail dl { display: grid; gap: 12px; font-size: 14.5px; }
-  aside.detail dt {
-    font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em;
-    color: var(--accent); font-weight: 700; margin-bottom: 2px;
+  .sys-card:nth-child(1), .sys-card:nth-child(2) { grid-column: span 3; }
+  .sys-card:hover { border-color: rgba(34,211,238,.45); background: var(--panel2); }
+  .sys-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: grid; place-items: center; margin-bottom: 22px;
+    background: linear-gradient(135deg, rgba(139,92,246,.18), rgba(34,211,238,.14));
+    border: 1px solid rgba(139,92,246,.3);
   }
-  aside.detail .badge {
-    display: inline-block; font-size: 12px; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; color: #fff;
+  .sys-icon svg { width: 26px; height: 26px; }
+  .sys-icon path, .sys-icon circle, .sys-icon rect, .sys-icon polyline, .sys-icon line {
+    stroke: var(--cyan);
   }
-  .hint { color: var(--muted); font-size: 13px; margin-top: 18px; }
+  .sys-card h3 { font-family: var(--font-d); font-weight: 600; font-size: 18px; margin-bottom: 12px; }
+  .sys-card p { color: var(--muted); font-size: 14.5px; }
+  .sys-card p b { color: var(--ink); font-weight: 700; }
+  .sys-more {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    font-size: 13px; font-weight: 800; color: var(--cyan); text-decoration: none;
+  }
+  .sys-more svg { transition: transform .25s; }
+  .sys-more:hover svg { transform: translateX(4px); }
+  @media (max-width: 860px) {
+    .sys-grid { grid-template-columns: 1fr; }
+    .sys-card, .sys-card:nth-child(1), .sys-card:nth-child(2) { grid-column: span 1; }
+  }
+</style>
+<style>
+  /* ---------- вода: pipeline ---------- */
+  .pipeline {
+    display: flex; align-items: stretch; gap: 0;
+    overflow-x: auto; padding: 10px 4px 22px; scrollbar-width: thin;
+  }
+  .pnode {
+    flex: none; display: flex; flex-direction: column; align-items: center;
+    gap: 10px; text-align: center; width: 128px;
+  }
+  .pnode-dot {
+    width: 58px; height: 58px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--bg1); border: 1px solid rgba(34,211,238,.4);
+    box-shadow: 0 0 0 6px rgba(34,211,238,.06), 0 0 26px rgba(34,211,238,.12);
+    font-family: var(--font-d); font-size: 15px; font-weight: 600; color: var(--cyan);
+  }
+  .pnode span { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+  .pipe {
+    flex: none; align-self: flex-start; width: 56px; height: 2px; margin-top: 28px;
+    background: repeating-linear-gradient(90deg, var(--cyan) 0 8px, transparent 8px 16px);
+    background-size: 32px 2px; opacity: .65;
+    animation: flow 1.1s linear infinite;
+  }
+  @keyframes flow { to { background-position: 32px 0; } }
 
+  .water-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; margin-top: 16px; }
+  .panel {
+    border-radius: var(--r); border: 1px solid var(--line);
+    background: var(--panel); padding: 30px 28px;
+  }
+  .panel h3 { font-family: var(--font-d); font-weight: 600; font-size: 17px; margin-bottom: 20px; }
+  .bar-row { margin-bottom: 18px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-top { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 8px; }
+  .bar-top span { color: var(--muted); }
+  .bar-top b { font-weight: 800; }
+  .bar-top b.bad { color: #f87171; }
+  .bar-top b.ok { color: var(--green); }
+  .bar { height: 7px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .bar i {
+    display: block; height: 100%; width: 0; border-radius: 99px;
+    background: var(--grad); transition: width 1.4s cubic-bezier(.22,1,.36,1);
+  }
+  .bar i.bad { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+  .photo-card {
+    position: relative; overflow: hidden; border-radius: var(--r);
+    border: 1px solid var(--line); min-height: 280px;
+  }
+  .photo-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .photo-card figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 20px 16px;
+    font-size: 13px; color: #e7ecf4;
+    background: linear-gradient(transparent, rgba(4,6,10,.85));
+  }
+  @media (max-width: 860px) { .water-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- электрика: цепочка ---------- */
+  .chain { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; }
+  .cnode {
+    position: relative; padding: 24px 22px; border-radius: var(--r);
+    background: var(--panel); border: 1px solid var(--line);
+  }
+  .cnode::after {
+    content: ""; position: absolute; top: 50%; right: -14px; width: 14px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--vio) 0 5px, transparent 5px 10px);
+    background-size: 20px 2px; animation: flow 1s linear infinite;
+  }
+  .cnode:last-child::after { display: none; }
+  .cnode .step {
+    font-family: var(--font-d); font-size: 11px; color: var(--vio);
+    letter-spacing: .12em; margin-bottom: 10px;
+  }
+  .cnode h4 { font-size: 15.5px; font-weight: 800; margin-bottom: 8px; }
+  .cnode p { font-size: 13px; color: var(--muted); }
+  .cnode.hot { border-color: rgba(251,191,36,.4); }
+  .cnode.hot .step { color: var(--amber); }
+  @media (max-width: 860px) {
+    .chain { grid-template-columns: 1fr; }
+    .cnode::after { display: none; }
+  }
+
+  /* ---------- отопление ---------- */
+  .heat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+  .zones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .zone {
+    padding: 10px 18px; border-radius: 999px; font-size: 13.5px; font-weight: 700;
+    border: 1px solid rgba(251,191,36,.35); color: var(--amber);
+    background: rgba(251,191,36,.07);
+  }
+  .steps { display: grid; gap: 12px; }
+  .step-card {
+    display: flex; gap: 18px; padding: 22px 24px; border-radius: var(--r);
+    background: var(--panel); border: 1px solid var(--line); align-items: flex-start;
+  }
+  .step-num {
+    flex: none; width: 42px; height: 42px; border-radius: 12px;
+    display: grid; place-items: center; font-family: var(--font-d);
+    font-size: 15px; font-weight: 600; color: var(--amber);
+    background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3);
+  }
+  .step-card h4 { font-size: 15.5px; font-weight: 800; margin-bottom: 6px; }
+  .step-card p { font-size: 13.5px; color: var(--muted); }
+  @media (max-width: 860px) { .heat-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- галерея ---------- */
+  .gwrap {
+    display: flex; gap: 16px; overflow-x: auto; padding: 6px 24px 26px;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+  }
+  .gwrap::-webkit-scrollbar { display: none; }
+  .gcard {
+    flex: none; width: min(420px, 78vw); border-radius: var(--r); overflow: hidden;
+    position: relative; scroll-snap-align: center; border: 1px solid var(--line);
+  }
+  .gcard img {
+    width: 100%; height: 480px; object-fit: cover;
+    transition: transform .8s cubic-bezier(.22,1,.36,1);
+  }
+  .gcard:hover img { transform: scale(1.05); }
+  .gcard figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 22px 18px;
+    background: linear-gradient(transparent, rgba(4,6,10,.88));
+    font-size: 13.5px; color: #dbe3ee;
+  }
+  .gcard figcaption b { display: block; font-size: 15px; margin-bottom: 3px; }
+  .gprogress {
+    width: min(1080px, calc(100% - 48px)); margin: 6px auto 0;
+    height: 3px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden;
+  }
+  .gprogress i { display: block; height: 100%; width: 12%; background: var(--grad); border-radius: 99px; transition: width .15s linear; }
+  .gallery-sec { padding-left: 0; padding-right: 0; }
+  .gallery-sec .sec-head { width: min(1080px, 100%); margin-left: auto; margin-right: auto; padding: 0 24px; }
+
+  /* ---------- роадмап ---------- */
+  .timeline { position: relative; padding-left: 34px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px;
+    background: linear-gradient(var(--green), var(--cyan), var(--vio));
+    border-radius: 99px; opacity: .5;
+  }
+  .tl-item { position: relative; padding-bottom: 38px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -32px; top: 7px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg0); border: 3px solid var(--cyan);
+    box-shadow: 0 0 14px rgba(34,211,238,.5);
+  }
+  .tl-item.done::before { border-color: var(--green); box-shadow: 0 0 14px rgba(52,211,153,.5); }
+  .tl-item.next::before { border-color: var(--vio); box-shadow: 0 0 14px rgba(139,92,246,.5); }
+  .tl-status {
+    font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .tl-item.done .tl-status { color: var(--green); }
+  .tl-item.now .tl-status { color: var(--cyan); }
+  .tl-item.next .tl-status { color: var(--vio); }
+  .tl-item h4 { font-family: var(--font-d); font-weight: 600; font-size: 17px; margin-bottom: 8px; }
+  .tl-item p { color: var(--muted); font-size: 14.5px; max-width: 640px; }
+
+  /* ---------- футер ---------- */
   footer {
-    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
-    color: var(--muted); font-size: 13px;
+    border-top: 1px solid var(--line); padding: 44px 24px 54px;
+    background: var(--bg1); position: relative; z-index: 2;
   }
+  .foot-inner {
+    width: min(1080px, 100%); margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between;
+    color: var(--muted); font-size: 13.5px;
+  }
+  .foot-inner a { color: var(--cyan); text-decoration: none; font-weight: 700; }
 
-  @media (max-width: 980px) {
-    .layout { grid-template-columns: 1fr; }
-    aside.detail { position: static; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Вводная схема электроснабжения дома</h1>
-  <p>15 кВт, 3 фазы, подземный ввод · котёл Thermex Boss 12 (380В) + БКН STOUT · резерв — однофазный генератор</p>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="noise"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#lg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M13 11l-2.5 4H13l-1 4 3.5-5H13l1-3z" fill="url(#lg)" stroke="none"/></svg>
+      <span>ПРОЕКТ&nbsp;ДОМА</span>
+    </a>
+    <div class="nav-tabs">
+      <a class="tab active" href="index.html" aria-current="page">Проект</a>
+      <a class="tab" href="schema.html">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        Схема ввода
+      </a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-inner">
+    <span class="kicker"><i></i>Стройка идёт · август 2026</span>
+    <h1 class="display" id="heroTitle">Инженерия дома, <span class="grad-text">продуманная</span> до последнего провода</h1>
+    <p class="hero-sub">
+      Одноэтажный дом <b>~100&nbsp;м²</b>, где всё посчитано заранее:
+      <b>15&nbsp;кВт и 3 фазы</b> на вводе, отопление только <b>тёплыми полами</b>,
+      собственная <b>скважина с водоподготовкой</b> и септик <b>Евролос Про&nbsp;5</b>.
+      Этот сайт — живой журнал инженерных решений проекта.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-grad magnet" href="#systems">
+        Смотреть системы
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+      </a>
+      <a class="btn btn-ghost magnet" href="schema.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        Схема электрики
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="chip"><b>15 кВт</b>3 фазы, подземный ввод</div>
+      <div class="chip"><b>7 зон</b>водяного тёплого пола</div>
+      <div class="chip"><b>5 ступеней</b>очистки воды из скважины</div>
+      <div class="chip"><b>ИБП + генератор</b>резерв критичных систем</div>
+    </div>
+  </div>
+  <div class="scroll-hint">листай</div>
 </header>
 
-<section class="agenda">
-  <div class="agenda-inner">
-    <h2>Общая идея</h2>
-    <ol>
-      <li><b>Котёл — напрямую к трём фазам.</b> Это единственная трёхфазная нагрузка и единственная, которой не нужна стабилизация: ТЭНам качество напряжения безразлично. Котёл идёт мимо стабилизатора.</li>
-      <li><b>Весь дом — на одной стабилизированной фазе.</b> Инверторный стабилизатор «3 в 1» равномерно грузит все три фазы и выдаёт одну чистую фазу: балансировка фаз не нужна вообще, качество сети в строящемся посёлке не страшно.</li>
-      <li><b>Резерв — тривиальный.</b> Однофазный инверторный генератор стоит стационарно во всепогодном коробе у дома и подключён фиксированным кабелем к перекидному рубильнику — без розеток. Запуск ручной. Кабель и гильза закладываются сейчас, генератор покупается позже.</li>
-    </ol>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Тёплые полы <em>●</em> Штиль «3 в 1» <em>●</em> Boss 12 Wi-Fi <em>●</em> Евролос Про 5 <em>●</em> Скважина + осмос <em>●</em> Генератор в коробе <em>●</em> Дренаж и ливнёвка <em>●</em> Закладные под баню <em>●</em></span>
+    <span>Тёплые полы <em>●</em> Штиль «3 в 1» <em>●</em> Boss 12 Wi-Fi <em>●</em> Евролос Про 5 <em>●</em> Скважина + осмос <em>●</em> Генератор в коробе <em>●</em> Дренаж и ливнёвка <em>●</em> Закладные под баню <em>●</em></span>
+  </div>
+</div>
+
+<section class="section" id="numbers">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Проект в цифрах</span>
+      <h2 class="sec-title">Сухая математика тёплого дома</h2>
+    </div>
+    <div class="nums">
+      <div class="num-card reveal">
+        <div class="num"><span class="count" data-count="15">0</span> <small>кВт</small></div>
+        <div class="num-label">вводная мощность по ТУ — 3 фазы, кабель в земле через гильзу в ростверке</div>
+      </div>
+      <div class="num-card reveal">
+        <div class="num"><span class="count" data-count="20">0</span> <small>кВА</small></div>
+        <div class="num-label">инверторный стабилизатор Штиль «3 в 1» — весь дом на одной чистой фазе</div>
+      </div>
+      <div class="num-card reveal">
+        <div class="num"><span class="count" data-count="12">0</span> <small>кВт</small></div>
+        <div class="num-label">электрокотёл Thermex Boss 12 Wi-Fi — единственная трёхфазная нагрузка</div>
+      </div>
+      <div class="num-card reveal">
+        <div class="num"><span class="count" data-count="11">0</span><small>× ПДК</small></div>
+        <div class="num-label">превышение железа в воде скважины — отсюда пять ступеней очистки</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="layout">
-  <div class="scheme-card">
-    <svg viewBox="0 0 1520 1580" role="img" aria-label="Однолинейная схема ввода">
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill="#9aa8b6"></path>
-        </marker>
-      </defs>
-
-      <!-- Зоны -->
-      <rect x="400" y="8" width="500" height="480" rx="16" fill="var(--shu-bg)" opacity="0.55"></rect>
-      <text x="650" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="var(--shu)">ЩУ НА УЛИЦЕ (металлический)</text>
-
-      <rect x="380" y="492" width="540" height="136" rx="16" fill="var(--vvod-bg)" opacity="0.6"></rect>
-      <text x="396" y="510" font-size="14" font-weight="700" fill="var(--vvod)">ВВОД В ДОМ (гильза в ростверке)</text>
-
-      <rect x="40" y="656" width="560" height="556" rx="16" fill="var(--kotel-bg)" opacity="0.6"></rect>
-      <text x="56" y="680" font-size="14" font-weight="700" fill="var(--kotel)">ВЕТКА А — КОТЁЛ (без стабилизатора)</text>
-
-      <rect x="660" y="656" width="600" height="910" rx="16" fill="var(--dom-bg)" opacity="0.55"></rect>
-      <text x="676" y="680" font-size="14" font-weight="700" fill="var(--dom)">ВЕТКА Б — ДОМ (стабилизированная фаза)</text>
-
-      <!-- Потоки: магистраль -->
-      <path class="flow" d="M650 120 L650 152" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M650 240 L650 272" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M650 360 L650 392" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M650 480 L650 512" marker-end="url(#arrow)"></path>
-      <!-- Развилка -->
-      <path class="flow" d="M650 600 L650 636 L320 636 L320 680" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M650 636 L960 636 L960 680" marker-end="url(#arrow)"></path>
-      <!-- Ветка А -->
-      <path class="flow" d="M320 776 L320 810" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M320 906 L320 940" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M320 1036 L320 1070" marker-end="url(#arrow)"></path>
-      <!-- Ветка Б -->
-      <path class="flow" d="M960 776 L960 810" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M960 906 L960 940" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M960 1036 L960 1070" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M960 1166 L960 1200" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M960 1296 L960 1330" marker-end="url(#arrow)"></path>
-      <path class="flow" d="M960 1426 L960 1460" marker-end="url(#arrow)"></path>
-      <!-- Генератор -->
-      <path class="flow future" d="M1360 1078 L1360 992 L1198 992" marker-end="url(#arrow)"></path>
-      <!-- ИБП -->
-      <path class="flow" d="M1192 1252 L1214 1252" marker-end="url(#arrow)"></path>
-
-      <!-- Узлы создаются скриптом -->
-      <g id="nodes"></g>
-    </svg>
+<section class="section" id="systems">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Системы</span>
+      <h2 class="sec-title">Пять контуров, один организм</h2>
+      <p class="sec-sub">Каждая система проектировалась с оглядкой на остальные: стабилизатор знает про генератор, септик — про промывки фильтров, а тёплые полы — про чистовое покрытие.</p>
+    </div>
+    <div class="sys-grid">
+      <article class="sys-card tilt reveal">
+        <div class="sys-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="draw" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        </div>
+        <h3>Электрика</h3>
+        <p>Котёл напрямую на трёх фазах, дом — через стабилизатор <b>«3 в 1»</b>. Рубильник 1-0-2 на <b>стационарный генератор</b>, <b>ИБП on-line</b> для роутера, охраны и автоматики.</p>
+        <a class="sys-more" href="schema.html">Интерактивная схема ввода
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </article>
+      <article class="sys-card tilt reveal">
+        <div class="sys-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="draw" d="M12 3v3"/><path class="draw" d="M12 18v3"/><path class="draw" d="M5.6 5.6l2.1 2.1"/><path class="draw" d="M16.3 16.3l2.1 2.1"/><path class="draw" d="M3 12h3"/><path class="draw" d="M18 12h3"/><circle class="draw" cx="12" cy="12" r="4"/></svg>
+        </div>
+        <h3>Отопление</h3>
+        <p>Только <b>водяные тёплые полы</b> — 7 зон, коллектор с расходомерами. Старт на механике, термостаты и сервоприводы докупаются после первого сезона.</p>
+        <a class="sys-more" href="#heat">Как это устроено
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </article>
+      <article class="sys-card tilt reveal">
+        <div class="sys-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="draw" d="M12 3s6 6.3 6 10.5A6 6 0 0 1 6 13.5C6 9.3 12 3 12 3z"/></svg>
+        </div>
+        <h3>Вода</h3>
+        <p>Скважина, железо <b>3,3 мг/л</b>. Цепочка: аэрация → обезжелезиватель → умягчитель → уголь → <b>осмос</b> на питьевую воду.</p>
+        <a class="sys-more" href="#water">Анализ и очистка
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </article>
+      <article class="sys-card tilt reveal">
+        <div class="sys-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle class="draw" cx="12" cy="12" r="8"/><path class="draw" d="M12 8c-2 2-3 3.4-3 5a3 3 0 0 0 6 0c0-1.6-1-3-3-5z"/></svg>
+        </div>
+        <h3>Канализация</h3>
+        <p>Септик <b>Евролос Про 5</b> — станция биоочистки. Компрессор сидит на неотключаемой группе за ИБП, солевые промывки фильтров — мимо биологии септика.</p>
+      </article>
+      <article class="sys-card tilt reveal">
+        <div class="sys-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="draw" d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle class="draw" cx="12" cy="10" r="2.5"/></svg>
+        </div>
+        <h3>Участок</h3>
+        <p>Пучинистые суглинки и верховодка: <b>дренаж и ливнёвка</b> до отмостки, трубы-пустышки под будущее, закладные <b>под баню</b> и автоматику ворот.</p>
+      </article>
+    </div>
   </div>
+</section>
 
-  <aside class="detail" id="detail">
-    <div class="hint">Кликните по узлу схемы — здесь появятся детали: что это, зачем нужно, наименование и номиналы.</div>
-  </aside>
-</div>
+<section class="section" id="water" style="background: var(--bg1);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Вода</span>
+      <h2 class="sec-title">Из скважины — в бокал: пять ступеней очистки</h2>
+      <p class="sec-sub">Анализ воды от 10.11.2025 показал железо 3,3 мг/л, марганец 0,2 и жёсткость 7,2 °Ж. Под эту воду собрана цепочка водоподготовки — обе колонны уже стоят в котельной.</p>
+    </div>
+
+    <div class="pipeline reveal" aria-label="Цепочка очистки воды">
+      <div class="pnode"><div class="pnode-dot">СКВ</div><span>скважина, насос</span></div>
+      <div class="pipe"></div>
+      <div class="pnode"><div class="pnode-dot">01</div><span>механический фильтр Big Blue</span></div>
+      <div class="pipe"></div>
+      <div class="pnode"><div class="pnode-dot">02</div><span>обезжелезиватель — колонна 1044</span></div>
+      <div class="pipe"></div>
+      <div class="pnode"><div class="pnode-dot">03</div><span>умягчитель с солевым баком</span></div>
+      <div class="pipe"></div>
+      <div class="pnode"><div class="pnode-dot">04</div><span>угольный фильтр</span></div>
+      <div class="pipe"></div>
+      <div class="pnode"><div class="pnode-dot">05</div><span>осмос — питьевая вода</span></div>
+    </div>
+
+    <div class="water-grid">
+      <div class="panel reveal">
+        <h3>Что показал анализ</h3>
+        <div class="bar-row">
+          <div class="bar-top"><span>Железо — 3,3 мг/л</span><b class="bad">11× ПДК</b></div>
+          <div class="bar"><i class="bad" data-w="100"></i></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-top"><span>Марганец — 0,2 мг/л</span><b class="bad">2× ПДК</b></div>
+          <div class="bar"><i class="bad" data-w="55"></i></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-top"><span>Жёсткость — 7,2 °Ж</span><b class="bad">выше нормы</b></div>
+          <div class="bar"><i class="bad" data-w="72"></i></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-top"><span>Мутность — 2,5 мг/л</span><b class="bad">1,7× ПДК</b></div>
+          <div class="bar"><i class="bad" data-w="42"></i></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-top"><span>pH — 7,0</span><b class="ok">норма</b></div>
+          <div class="bar"><i data-w="50"></i></div>
+        </div>
+      </div>
+      <figure class="photo-card reveal">
+        <img src="photos/analiz-vody.jpg" alt="Анализ воды из скважины" loading="lazy">
+        <figcaption>Лабораторный анализ воды — по нему выбрана вся цепочка фильтров</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="power">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Электрика</span>
+      <h2 class="sec-title">Три фазы входят — одна чистая выходит</h2>
+      <p class="sec-sub">Котёл — единственная трёхфазная нагрузка, ему стабилизация не нужна. Весь остальной дом питается через инверторный стабилизатор «3 в 1»: балансировка фаз перестаёт существовать как проблема, а резерв — однофазный генератор.</p>
+    </div>
+    <div class="chain reveal">
+      <div class="cnode">
+        <div class="step">УЛИЦА</div>
+        <h4>ЩУ на опоре</h4>
+        <p>Вводной автомат 25А 3P, счётчик, УЗИП I+II, разделение PEN → PE+N</p>
+      </div>
+      <div class="cnode">
+        <div class="step">СТАБИЛИЗАЦИЯ</div>
+        <h4>Штиль IS3120RT</h4>
+        <p>Инверторный 20 кВА: 3 фазы на входе — 1 фаза ±2% на выходе, ремонтный байпас</p>
+      </div>
+      <div class="cnode">
+        <div class="step">РЕЗЕРВ</div>
+        <h4>Рубильник 1-0-2</h4>
+        <p>Сеть / обесточено / стационарный генератор 6–8 кВт во всепогодном коробе</p>
+      </div>
+      <div class="cnode hot">
+        <div class="step">ДОМ</div>
+        <h4>ГРЩ + ИБП</h4>
+        <p>Неотключаемая группа за on-line ИБП: роутер, охрана, автоматика, компрессор септика</p>
+      </div>
+    </div>
+    <div class="hero-cta reveal" style="margin-top: 34px;">
+      <a class="btn btn-grad magnet" href="schema.html">
+        Открыть полную интерактивную схему
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="heat" style="background: var(--bg1);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Отопление</span>
+      <h2 class="sec-title">Ни одного радиатора — только тёплый пол</h2>
+      <p class="sec-sub">Семь зон водяного тёплого пола под керамогранитом 10 мм. Коллекторы уже смонтированы — дальше стяжка по пирогу, посчитанному под чистовое покрытие.</p>
+    </div>
+    <div class="heat-grid">
+      <div class="panel reveal">
+        <h3>Стратегия: механика сейчас, электроника потом</h3>
+        <div class="steps">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <div>
+              <h4>Старт на механике</h4>
+              <p>Расходомеры на коллекторе и уставка котла — дом греется с первого дня без единого термостата.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <div>
+              <h4>Электроника по факту сезона</h4>
+              <p>7 термостатов + сервоприводы NC + коммутационный блок докупаются после первой зимы — когда понятно, где какая температура нужна.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <div>
+              <h4>Запас на будущее</h4>
+              <p>В каждую гофру Ø16 заложен запасной датчик пола: замена без вскрытия стяжки — переходы стена→пол плавной дугой.</p>
+            </div>
+          </div>
+        </div>
+        <div class="zones">
+          <span class="zone">Кухня-гостиная</span>
+          <span class="zone">Спальня 1</span>
+          <span class="zone">Спальня 2</span>
+          <span class="zone">Кабинет</span>
+          <span class="zone">Санузел</span>
+          <span class="zone">Коридор</span>
+          <span class="zone">Котельная</span>
+        </div>
+      </div>
+      <figure class="photo-card reveal">
+        <img src="photos/kotelnya.jpg" alt="Котельная: котёл, бойлер и коллекторы тёплого пола" loading="lazy">
+        <figcaption>Котельная сегодня: Boss 12, БКН STOUT и коллекторы семи зон тёплого пола</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section gallery-sec" id="photos">
+  <div class="sec-head reveal">
+    <span class="sec-tag">Фото со стройки</span>
+    <h2 class="sec-title">Железо, которое уже стоит</h2>
+  </div>
+  <div class="gwrap" id="gwrap">
+    <figure class="gcard"><img src="photos/kotelnya.jpg" alt="Котельная — общий вид" loading="lazy"><figcaption><b>Котельная</b>котёл, БКН и коллекторы тёплого пола</figcaption></figure>
+    <figure class="gcard"><img src="photos/kotel.jpg" alt="Котёл Thermex Boss 12 Wi-Fi" loading="lazy"><figcaption><b>Thermex Boss 12 Wi-Fi</b>электрокотёл 12 кВт, 380В</figcaption></figure>
+    <figure class="gcard"><img src="photos/boiler.jpg" alt="Бойлер косвенного нагрева STOUT" loading="lazy"><figcaption><b>БКН STOUT</b>горячая вода от котла, без ТЭНа в базе</figcaption></figure>
+    <figure class="gcard"><img src="photos/vodoochistka.jpg" alt="Колонны водоочистки" loading="lazy"><figcaption><b>Водоочистка</b>обезжелезиватель и умягчитель, клапаны Runxin</figcaption></figure>
+    <figure class="gcard"><img src="photos/vodoochistka-2.jpg" alt="Солевой бак умягчителя" loading="lazy"><figcaption><b>Солевой бак</b>регенерация умягчителя — промывки уходят мимо септика</figcaption></figure>
+    <figure class="gcard"><img src="photos/kotelnya-2.jpg" alt="Котельная, вид от окна" loading="lazy"><figcaption><b>Котельная, вид от окна</b>все инженерные магистрали сходятся здесь</figcaption></figure>
+    <figure class="gcard"><img src="photos/septik.jpg" alt="Септик Евролос Про 5" loading="lazy"><figcaption><b>Евролос Про 5</b>горловина станции биоочистки</figcaption></figure>
+  </div>
+  <div class="gprogress"><i id="gbar"></i></div>
+</section>
+
+<section class="section" id="roadmap" style="background: var(--bg1);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Роадмап</span>
+      <h2 class="sec-title">Где мы и что дальше</h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-item done reveal">
+        <div class="tl-status">Сделано</div>
+        <h4>Разведка и основание</h4>
+        <p>Геология участка (пучинистые суглинки, верховодка — отсюда гильзы, дренаж и оцинкованный контур заземления), скважина с лабораторным анализом воды.</p>
+      </div>
+      <div class="tl-item done reveal">
+        <div class="tl-status">Сделано</div>
+        <h4>Котельная и септик</h4>
+        <p>Котёл Boss 12, БКН STOUT, две колонны водоочистки с солевым баком, коллекторы тёплых полов. Септик Евролос Про 5 установлен и закопан.</p>
+      </div>
+      <div class="tl-item now reveal">
+        <div class="tl-status">Сейчас в работе</div>
+        <h4>Проект разводки</h4>
+        <p>Зафиксированы все выводы: розетки и свет, слаботочка и видеонаблюдение, уличные розетки, закладные под баню и автоматику ворот, сливы под робот-пылесос и сушильную машину.</p>
+      </div>
+      <div class="tl-item next reveal">
+        <div class="tl-status">Дальше</div>
+        <h4>Черновые инженерные работы</h4>
+        <p>Разводка электрики и сантехники по спискам, дренаж и ливнёвка до отмостки, стяжка с тёплыми полами под керамогранит.</p>
+      </div>
+      <div class="tl-item next reveal">
+        <div class="tl-status">Дальше</div>
+        <h4>Резерв и благоустройство</h4>
+        <p>Стационарный генератор в коробе (кабель и гильза уже закладываются), освещение участка с фотореле, видеонаблюдение, баня.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <footer>
-  Схема носит проектный характер — перед реализацией сверяйтесь с действующими СП/ПУЭ и требованиями сетевой организации.
+  <div class="foot-inner">
+    <span>Проект дома · живой журнал инженерных решений · 2026</span>
+    <span><a href="schema.html">Схема ввода электрики</a> · <a href="#top">Наверх</a></span>
+  </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script>
-const NODES = [
-  // --- Магистраль / ЩУ ---
-  { id:1, x:650, y:76,  w:440, zone:"shu",
-    title:"Вводной автомат 25А 3P",
-    tag:"Рубеж выделенной мощности",
-    short:"Ограничивает потребление по техусловиям (15 кВт) и защищает вводной кабель",
-    name:"Автоматический выключатель 3P 25А, характеристика C, в металлическом ЩУ",
-    spec:"25А на фазу = потолок 15 кВт по ТУ. Размещение (опора/фасад) диктует сетевая организация.",
-    why:"Всё, что дальше, считается от этого номинала: котёл на 12 кВт съедает 18,1А/фазу, дому остаётся ~7А/фазу — поэтому ниже по схеме стоит реле приоритета." },
-  { id:2, x:650, y:196, w:440, zone:"shu",
-    title:"Счётчик",
-    tag:"Коммерческий учёт",
-    short:"Трёхфазный прибор учёта — по требованиям сетевой организации",
-    name:"Трёхфазный счётчик (модель и класс — по сетевой)",
-    spec:"Часто выносится на фасад или опору — уточнить при получении ТУ.",
-    why:"Его положение определяет, где физически заканчивается зона сетевой и начинается наш ЩУ." },
-  { id:3, x:650, y:316, w:440, zone:"shu",
-    title:"УЗИП класс I+II",
-    tag:"Гроза и импульсы",
-    short:"Отводит грозовые и коммутационные перенапряжения на землю",
-    name:"Устройство защиты от импульсных перенапряжений, класс I+II",
-    spec:"Ставится в металлическом уличном ЩУ, до захода кабеля в дом. Вторая ступень — класс II в домашнем щите (узел 14).",
-    why:"При срабатывании через УЗИП уходят килоамперы — в пластиковом боксе внутри дома это риск возгорания." },
-  { id:4, x:650, y:436, w:440, zone:"shu",
-    title:"ГЗШ: PEN → PE + N + контур",
-    tag:"Система TN-C-S",
-    short:"Разделение PEN на защитный и рабочий проводники, повторное заземление",
-    name:"Главная заземляющая шина; контур — оцинкованные/омеднённые электроды",
-    spec:"Грунты участка высокоагрессивны к углеродистой стали (отчёт ИГИ) — чёрный металл не применять.",
-    why:"Отсюда по дому идут раздельные PE и N. Сопротивление контура — замерить после монтажа." },
-  { id:5, x:650, y:556, w:440, zone:"vvod",
-    title:"УЗО селективное 100–300 мА",
-    tag:"Противопожарная защита",
-    short:"Защищает всю вводную часть от утечек, тип S (селективное)",
-    name:"УЗО 100–300 мА, тип S — в вводном щите в доме, до разветвления на ветки",
-    spec:"Селективность с групповыми УЗО 30 мА: при аварии отключится группа, а не весь дом. Ввод в дом — подземный, в герметичной гильзе через ростверк: грунты пучинистые, есть верховодка. Здесь же, на вводных фазах до разветвления на ветки, — три трансформатора тока реле приоритета (узел 8).",
-    why:"Это не замена рабочим УЗО на группах — слои защиты разные: пожарный и персональный. В доме, а не на опоре: УЗО не любит мороз и влагу, а обслуживать удобнее изнутри." },
+(function () {
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia("(pointer: fine)").matches;
 
-  // --- Ветка А: котёл ---
-  { id:6, x:320, y:732, w:440, zone:"kotel",
-    title:"Реле напряжения 3-фазное",
-    tag:"Защита всего котла",
-    short:"Контроль обрыва нуля, перекоса и чередования фаз",
-    name:"Трёхфазное реле напряжения (управляет контактором, узел 8)",
-    spec:"Реагирует на: обрыв N, асимметрию фаз, выход за пороги, неверное чередование. При аварии контактор обесточивает котёл целиком.",
-    why:"У Boss 12 одна клеммная коробка: плата, насос и Wi-Fi питаются внутри от того же ввода (мануал, рис. 17/18) — раздельно запитать электронику нельзя. РН защищает и ТЭНы, и электронику, но только полным отключением." },
-  { id:7, x:320, y:862, w:440, zone:"kotel",
-    title:"Автомат 20А 3P + УЗО 30 мА",
-    tag:"Защита линии котла",
-    short:"Коммутация и дифференциальная защита ветки котла",
-    name:"Автомат 3P 20А + УЗО 30 мА (или дифавтомат 20А)",
-    spec:"20А правильно защищает линию под рабочий ток 18,1А/фазу.",
-    why:"Отдельная ветка — отдельная защита: авария в котле не гасит дом и наоборот." },
-  { id:8, x:320, y:992, w:440, zone:"kotel",
-    title:"Контактор + реле приоритета",
-    tag:"Антиперегруз ввода",
-    short:"РН рвёт силовое питание при аварии; приоритет действует через термостатный вход",
-    name:"Контактор (управляется РН, узел 6) + трёхфазное реле приоритета с тремя ТТ на вводных фазах",
-    spec:"Приоритет размыкает вход проводного термостата котла (сухой контакт NC, PF=01): котёл штатно прекращает нагрев, а плата, насос, Wi-Fi и антизамерзание продолжают работать. Силовое питание котла приоритетом не рвём — это обесточило бы его целиком. В эту же цепь последовательно встанет контакт «запрос тепла» зональной автоматики пола (7 зон).",
-    why:"Духовка + чайник + фен не выбьют вводной автомат: ТЭНы молчат минуты — дом не заметит, у отопления огромная инерция." },
-  { id:9, x:320, y:1122, w:440, zone:"kotel",
-    title:"Котёл Thermex Boss 12 Wi-Fi",
-    tag:"Отопление: тёплый пол ~100 м²",
-    short:"Электрокотёл 380В, ступени 2/4/6/8/10/12 кВт",
-    name:"Thermex Boss 12 Wi-Fi, подключение L1-L2-L3-N-PE (без перемычек)",
-    spec:"12 кВт на 380В = 18,1А/фазу. Кабель 5×4 мм²: 2,5 мм² нормативно допустимо, но 4 мм² даёт запас на длительную зимнюю нагрузку.",
-    why:"Единственная трёхфазная нагрузка и единственная, которой не нужна стабилизация — поэтому до стабилизатора. Зимой реально живёт на 6–8 кВт. Плата, насос и Wi-Fi питаются внутри от общего ввода (мануал, рис. 14, 17/18) — раздельного питания электроники нет." },
-
-  // --- Ветка Б: дом ---
-  { id:10, x:960, y:732, w:460, zone:"dom",
-    title:"Штиль IS3120RT (3 в 1)",
-    tag:"Сердце схемы",
-    short:"Инверторный стабилизатор: вход 3 фазы → выход 1 чистая фаза",
-    name:"Штиль ИнСтаб IS3120RT, 20 кВА / 16 кВт, двойное преобразование",
-    spec:"Вход: 165–310В, равномерно до 35А/фазу. Выход: 220В ±2%, до 91А. КПД 97%.",
-    why:"Весь дом однофазный — балансировка фаз не нужна вообще; просевшая сеть посёлка (когда все заселятся) не страшна." },
-  { id:11, x:960, y:862, w:460, zone:"dom",
-    title:"Ремонтный байпас",
-    tag:"Обход стабилизатора",
-    short:"Кулачковый переключатель «сеть / 0 / Штиль» при отказе стабилизатора",
-    name:"Кулачковый переключатель 3-позиционный 32А",
-    spec:"У Штиля есть только электронный автобайпас — при полной гибели аппарата он не поможет. Номинала 32А достаточно: в режиме байпаса дом сидит на одной фазе ввода, ограниченной вводным автоматом 25А (~5,5 кВт).",
-    why:"Зимой дом отапливается электричеством: единая точка отказа без обхода недопустима. Кулачковый механизм невозможно переключить случайным щелчком по щиту." },
-  { id:12, x:960, y:992, w:460, zone:"dom",
-    title:"Рубильник 1-0-2, 100А",
-    tag:"Сеть / генератор",
-    short:"Перекидной рубильник: сеть — выкл — генератор",
-    name:"Реверсивный рубильник 1-0-2, 100А, механическая блокировка",
-    spec:"Номинал с запасом: после стабилизатора ток до ~75А (16 кВт на одной фазе). Кабель дальше — 16 мм².",
-    why:"Положение «2» — генератор идёт мимо стабилизатора: у него своя автоматическая регулировка напряжения, гнать его напряжение через стабилизатор не нужно." },
-  { id:13, x:1360, y:1122, w:280, zone:"future",
-    title:"Генератор (стационарный)",
-    tag:"Резерв · покупается позже",
-    short:"Инверторный 1ф, 6–8 кВт во всепогодном коробе у дома, запуск ручной",
-    name:"Кабель 3×6 мм² от рубильника (узел 12) напрямую в клеммную коробку генератора; кабель и гильза — закладные",
-    spec:"Подключение фиксированное, без розетки. При установке: отвод выхлопа и вентиляция короба, удалённость от окон и приточной вентиляции, шум, заземление корпуса на контур. Для 8 кВт (~36А) сверить макс. ток модели — при необходимости кабель 3×10.",
-    why:"В текущей конфигурации котёл от генератора не работает. Запасной ход на будущее: по мануалу котёл допускает однофазное питание до 8 кВт (перемычки L1-L2-L3 в клеммной коробке + DIP-переключатель мощности на плате), решение — при покупке генератора." },
-  { id:14, x:960, y:1122, w:460, zone:"dom",
-    title:"ГРЩ: УЗИП II + шины",
-    tag:"Домашний щит",
-    short:"Вторая ступень УЗИП, силовые шины, запас модулей",
-    name:"УЗИП класс II + шины на 75А+, щит с запасом 25–30% модулей",
-    spec:"Вторая ступень догоняет остатки импульса, дошедшие по кабелю от УЗИП I+II.",
-    why:"Опыт: свободные модули заканчиваются в первый же год. Шины N и PE — на изоляторах, на полный ток ввода, с запасом отверстий: вместо бытовой шины Navigator в корпусе на 7 отверстий — после стабилизатора по нейтрали идёт до ~75А, а линий в доме заведомо больше семи." },
-  { id:15, x:960, y:1252, w:460, zone:"dom",
-    title:"Неотключаемая группа",
-    tag:"Живёт и на генераторе",
-    short:"Отдельное УЗО 30 мА: холодильник напрямую, критичная электроника — через ИБП (узел 18)",
-    name:"УЗО 30 мА + автоматы: холодильник напрямую; ввод на ИБП (узел 18) — роутер, охрана, автоматика коллектора ТП, водоочистка, септик",
-    spec:"Септик: отдельный автомат 10А, кабель 3×1,5 до горловины (компрессор 55–65 Вт, 24/7). Насосов тёплого пола здесь нет: насос встроен в котёл и сидит на ветке А. Плата котла сюда не входит по той же причине.",
-    why:"Холодильник напрямую: перерывы ему не страшны (закрытый держит холод 4+ часов), а АКБ ИБП он бы съедал первым. Септик без воздуха деградирует за сутки — поэтому через ИБП." },
-  { id:16, x:960, y:1382, w:460, zone:"dom",
-    title:"Групповые линии",
-    tag:"Розетки, свет, техника",
-    short:"УЗО 30 мА на группы, 10 мА — влажные зоны",
-    name:"Автоматы: свет 10А (3×1,5), розетки 16А (3×2,5), отдельные линии: кухня, кондиционеры, насос скважины",
-    spec:"Свет отделён от розеток; ванные — УЗО 10 мА.",
-    why:"Селективность с вводным УЗО типа S: при аварии отключится только проблемная группа." },
-  { id:17, x:960, y:1512, w:460, zone:"dom",
-    title:"Резерв: ТЭН БКН STOUT",
-    tag:"ГВС без котла",
-    short:"Линия под опциональный ТЭН 2–3 кВт в бойлере",
-    name:"Линия 3×2,5, автомат 16А — под ТЭН 2–3 кВт (опция STOUT)",
-    spec:"Отключаемая при резерве линия: на генераторе включается только вручную.",
-    why:"2–3 кВт — треть мощности будущего генератора, автоматически на него вешать нельзя." },
-  { id:18, x:1360, y:1252, w:280, zone:"dom",
-    title:"ИБП on-line ~1 кВА",
-    tag:"Бесперебойник электроники",
-    short:"Роутер, охрана, автоматика коллектора ТП, водоочистка, компрессор септика",
-    name:"ИБП двойного преобразования (on-line), ~1 кВА, внешние АКБ",
-    spec:"Длительная нагрузка ~200–350 Вт → 1 кВА с запасом. Ёмкость АКБ — по целевой автономии (ориентир 1–2 ч). Стоит после рубильника 1-0-2: работает и от сети, и от генератора, а on-line выправляет «грязную» синусоиду генератора. Котёл не покрывает: его плата на ветке А, при блэкауте отопление встаёт до генератора. Закладное: кабель от щита 3×4 мм² (апгрейд до 3–5 кВА без перекладки) + место на стене рядом с ГРЩ под аппарат и АКБ.",
-    why:"Микроперерывы и провалы сети не должны ронять связь, охрану, автоматику отопления и аэрацию септика. Модель и АКБ — открытый вопрос, решается при покупке." },
-];
-
-const ZONES = {
-  shu:   { fill:"#2f5f8f", label:"ЩУ" },
-  vvod:  { fill:"#7a5fa0", label:"Ввод" },
-  kotel: { fill:"#b8631a", label:"Котёл" },
-  dom:   { fill:"#1e7a5a", label:"Дом" },
-  future:{ fill:"#7d8894", label:"Позже" },
-};
-
-const svgNS = "http://www.w3.org/2000/svg";
-const g = document.getElementById("nodes");
-const BOX_H = 88;
-
-function wrap(text, max) {
-  const words = text.split(" ");
-  const lines = []; let cur = "";
-  for (const w of words) {
-    if ((cur + " " + w).trim().length > max) { lines.push(cur.trim()); cur = w; }
-    else cur += " " + w;
+  /* ---------- плавный скролл (Lenis) ---------- */
+  var lenis = null;
+  if (!reduceMotion && typeof Lenis !== "undefined") {
+    lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    var rafLoop = function (time) { lenis.raf(time); requestAnimationFrame(rafLoop); };
+    requestAnimationFrame(rafLoop);
   }
-  if (cur.trim()) lines.push(cur.trim());
-  return lines;
-}
-
-NODES.forEach(n => {
-  const h = BOX_H;
-  const grp = document.createElementNS(svgNS, "g");
-  grp.setAttribute("class", "node");
-  grp.dataset.id = n.id;
-
-  const rect = document.createElementNS(svgNS, "rect");
-  rect.setAttribute("class", "box");
-  rect.setAttribute("x", n.x - n.w/2);
-  rect.setAttribute("y", n.y - h/2);
-  rect.setAttribute("width", n.w);
-  rect.setAttribute("height", h);
-  rect.setAttribute("rx", 12);
-  rect.setAttribute("fill", "#ffffff");
-  rect.setAttribute("stroke", ZONES[n.zone].fill);
-  rect.setAttribute("stroke-width", 2);
-  if (n.zone === "future") rect.setAttribute("stroke-dasharray", "6 4");
-  grp.appendChild(rect);
-
-  const badge = document.createElementNS(svgNS, "circle");
-  badge.setAttribute("cx", n.x - n.w/2 + 26);
-  badge.setAttribute("cy", n.y - h/2 + 27);
-  badge.setAttribute("r", 17);
-  badge.setAttribute("fill", ZONES[n.zone].fill);
-  grp.appendChild(badge);
-
-  const num = document.createElementNS(svgNS, "text");
-  num.setAttribute("class", "num");
-  num.setAttribute("x", n.x - n.w/2 + 26);
-  num.setAttribute("y", n.y - h/2 + 33);
-  num.setAttribute("text-anchor", "middle");
-  num.setAttribute("font-size", "16");
-  num.setAttribute("fill", "#ffffff");
-  num.textContent = n.id;
-  grp.appendChild(num);
-
-  const title = document.createElementNS(svgNS, "text");
-  title.setAttribute("x", n.x - n.w/2 + 52);
-  title.setAttribute("y", n.y - h/2 + 33);
-  title.setAttribute("font-size", "17");
-  title.setAttribute("font-weight", "700");
-  title.setAttribute("fill", "#1c2530");
-  title.textContent = n.title;
-  grp.appendChild(title);
-
-  const subLines = wrap(n.short, Math.max(16, Math.floor((n.w - 84) / 7.3))).slice(0, 2);
-  subLines.forEach((line, i) => {
-    const sub = document.createElementNS(svgNS, "text");
-    sub.setAttribute("x", n.x - n.w/2 + 52);
-    sub.setAttribute("y", n.y - h/2 + 55 + i*17);
-    sub.setAttribute("font-size", "13");
-    sub.setAttribute("fill", "#5b6b7d");
-    sub.textContent = line;
-    grp.appendChild(sub);
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var id = a.getAttribute("href");
+      if (id.length < 2) return;
+      var el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      if (lenis) { lenis.scrollTo(el, { offset: -20 }); }
+      else { el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }); }
+    });
   });
 
-  grp.addEventListener("click", () => select(n.id));
-  g.appendChild(grp);
-});
+  /* ---------- GSAP: появление и параллакс ---------- */
+  if (!reduceMotion && typeof gsap !== "undefined") {
+    if (typeof ScrollTrigger !== "undefined") {
+      gsap.registerPlugin(ScrollTrigger);
+      if (lenis) { lenis.on("scroll", ScrollTrigger.update); }
 
-function select(id) {
-  document.querySelectorAll(".node").forEach(el => el.classList.remove("selected"));
-  const el = document.querySelector(`.node[data-id="${id}"]`);
-  if (el) el.classList.add("selected");
-  const n = NODES.find(v => v.id === id);
-  const z = ZONES[n.zone];
-  document.getElementById("detail").innerHTML = `
-    <span class="badge" style="background:${z.fill}">${n.id} · ${z.label}</span>
-    <h3>${n.title}</h3>
-    <div class="tagline">${n.tag}</div>
-    <dl>
-      <div><dt>Что это и зачем</dt><dd>${n.short}</dd></div>
-      <div><dt>Наименование</dt><dd>${n.name}</dd></div>
-      <div><dt>Номиналы / мощность</dt><dd>${n.spec}</dd></div>
-      <div><dt>Почему так</dt><dd>${n.why}</dd></div>
-    </dl>
-    <div class="hint">Клик по другому узлу — следующие детали.</div>`;
-  if (window.innerWidth <= 980) {
-    document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      gsap.utils.toArray(".reveal").forEach(function (el, i) {
+        gsap.from(el, {
+          opacity: 0, y: 34, duration: 0.9, ease: "power3.out",
+          delay: (i % 3) * 0.06,
+          scrollTrigger: { trigger: el, start: "top 88%", once: true }
+        });
+      });
+
+      gsap.to(".blob-1", { yPercent: 24, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+      gsap.to(".blob-2", { yPercent: -18, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+      gsap.to(".hero-inner", { yPercent: -8, opacity: 0.25, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "30% top", end: "bottom top", scrub: 1 } });
+    }
+
+    /* hero-заголовок: пословный подъём */
+    var h1 = document.getElementById("heroTitle");
+    if (h1) {
+      h1.innerHTML = h1.innerHTML.replace(/(<span class="grad-text">|<\/span>)/g, "$1")
+        .split(/(\s+||)/).filter(function (s) { return s.trim() !== ""; })
+        .map(function (s) {
+          if (s === "") return '<span class="grad-text">';
+          if (s === "") return "</span>";
+          return '<span class="w">' + s + "</span>";
+        }).join(" ");
+      gsap.from("#heroTitle .w", { opacity: 0, y: 46, rotateX: -35, transformOrigin: "0 100%",
+        duration: 1, ease: "power4.out", stagger: 0.07, delay: 0.15 });
+    }
+    gsap.from(".kicker", { opacity: 0, y: 18, duration: 0.8, ease: "power3.out" });
+    gsap.from(".hero-sub, .hero-cta, .hero-stats", { opacity: 0, y: 26, duration: 0.9,
+      ease: "power3.out", stagger: 0.12, delay: 0.5 });
+    gsap.from(".nav-inner", { y: -60, opacity: 0, duration: 0.9, ease: "power3.out", delay: 0.3 });
   }
-}
 
-// Стартовый выбор — сердце схемы
-select(10);
+  /* ---------- счётчики, бары, иконки (работают и без GSAP) ---------- */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target;
+      io.unobserve(el);
+
+      if (el.classList.contains("count")) {
+        var target = parseInt(el.dataset.count, 10);
+        var t0 = null, dur = 1400;
+        var tick = function (t) {
+          if (!t0) t0 = t;
+          var p = Math.min((t - t0) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased);
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        if (reduceMotion) { el.textContent = target; } else { requestAnimationFrame(tick); }
+      }
+
+      if (el.tagName === "I" && el.dataset.w) {
+        requestAnimationFrame(function () { el.style.width = el.dataset.w + "%"; });
+      }
+
+      if (el.classList.contains("draw")) {
+        try {
+          var len = el.getTotalLength();
+          el.style.strokeDasharray = len;
+          el.style.strokeDashoffset = len;
+          el.getBoundingClientRect();
+          el.style.transition = "stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)";
+          el.style.strokeDashoffset = "0";
+        } catch (e) { /* не path — пропускаем */ }
+      }
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll(".count, .bar i, .draw").forEach(function (el) { io.observe(el); });
+
+  /* ---------- прогресс фотогалереи ---------- */
+  var gwrap = document.getElementById("gwrap");
+  var gbar = document.getElementById("gbar");
+  if (gwrap && gbar) {
+    var updateBar = function () {
+      var max = gwrap.scrollWidth - gwrap.clientWidth;
+      var p = max > 0 ? gwrap.scrollLeft / max : 0;
+      gbar.style.width = (12 + p * 88) + "%";
+    };
+    gwrap.addEventListener("scroll", updateBar, { passive: true });
+    updateBar();
+  }
+
+  /* ---------- магнитные кнопки и наклон карточек ---------- */
+  if (finePointer && !reduceMotion) {
+    document.querySelectorAll(".magnet").forEach(function (btn) {
+      btn.addEventListener("mousemove", function (e) {
+        var r = btn.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2;
+        var y = e.clientY - r.top - r.height / 2;
+        btn.style.transform = "translate(" + x * 0.18 + "px," + y * 0.3 + "px)";
+      });
+      btn.addEventListener("mouseleave", function () { btn.style.transform = ""; });
+    });
+
+    document.querySelectorAll(".tilt").forEach(function (card) {
+      card.addEventListener("mousemove", function (e) {
+        var r = card.getBoundingClientRect();
+        var rx = ((e.clientY - r.top) / r.height - 0.5) * -6;
+        var ry = ((e.clientX - r.left) / r.width - 0.5) * 6;
+        card.style.transform = "perspective(800px) rotateX(" + rx + "deg) rotateY(" + ry + "deg)";
+      });
+      card.addEventListener("mouseleave", function () { card.style.transform = ""; });
+    });
+
+    var glow = document.getElementById("cursorGlow");
+    if (glow) {
+      var gx = -600, gy = -600, cx = gx, cy = gy;
+      document.addEventListener("mousemove", function (e) { gx = e.clientX; gy = e.clientY; });
+      (function glowLoop() {
+        cx += (gx - cx) * 0.08; cy += (gy - cy) * 0.08;
+        glow.style.left = cx + "px"; glow.style.top = cy + "px";
+        requestAnimationFrame(glowLoop);
+      })();
+    }
+  }
+})();
 </script>
 </body>
 </html>
