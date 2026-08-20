@@ -460,6 +460,62 @@
   }
   .foot-inner a { color: var(--cyan); text-decoration: none; font-weight: 700; }
 
+  /* ---------- смета ---------- */
+  .smeta-list { display: grid; gap: 12px; }
+  .smeta-dir { border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); overflow: hidden; transition: border-color .3s; }
+  .smeta-dir[open] { border-color: rgba(139,92,246,.4); }
+  .smeta-dir summary {
+    display: flex; align-items: center; gap: 18px; padding: 20px 24px;
+    cursor: pointer; list-style: none; user-select: none;
+  }
+  .smeta-dir summary::-webkit-details-marker { display: none; }
+  .smeta-name { font-weight: 800; font-size: 15px; display: flex; align-items: baseline; gap: 12px; flex: 1; min-width: 0; }
+  .smeta-name b { font-family: var(--font-d); font-size: 12px; color: var(--cyan); flex: none; }
+  .smeta-bar { flex: none; width: 130px; height: 6px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .smeta-bar i { display: block; height: 100%; background: var(--grad); border-radius: 99px; }
+  .smeta-sum { flex: none; font-family: var(--font-d); font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .smeta-chev { flex: none; color: var(--muted); transition: transform .3s; }
+  .smeta-dir[open] .smeta-chev { transform: rotate(180deg); }
+  .smeta-scroll { overflow-x: auto; border-top: 1px solid var(--line); }
+  .smeta-dir[open] .smeta-scroll { animation: smetaIn .35s ease; }
+  @keyframes smetaIn { from { opacity: 0; transform: translateY(-8px); } }
+  .smeta-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 760px; }
+  .smeta-table th {
+    text-align: left; padding: 12px 16px; color: var(--muted);
+    font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+    border-bottom: 1px solid var(--line); font-weight: 700;
+  }
+  .smeta-table td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: top; }
+  .smeta-table tbody tr:last-child td { border-bottom: none; }
+  .smeta-table tbody tr:hover { background: rgba(139,92,246,.06); }
+  .smeta-rsum { font-weight: 800; white-space: nowrap; }
+  .smeta-src { font-size: 12.5px; color: var(--muted); }
+  .smeta-src a { color: var(--cyan); text-decoration: none; }
+  .smeta-src a:hover { text-decoration: underline; }
+  .st {
+    display: inline-block; margin-right: 8px; padding: 2px 9px; border-radius: 99px;
+    font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .st-fact { color: var(--green); background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.35); }
+  .st-maybe { color: var(--amber); background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3); }
+  .st-plan { color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--line); }
+  .smeta-total {
+    margin-top: 26px; padding: 30px 28px; border-radius: var(--r);
+    border: 1px solid rgba(139,92,246,.35);
+    background: linear-gradient(135deg, rgba(139,92,246,.1), rgba(34,211,238,.06));
+  }
+  .smeta-total-main { display: flex; flex-wrap: wrap; gap: 28px 56px; }
+  .smeta-big span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .smeta-big b { font-family: var(--font-d); font-size: clamp(24px, 3.4vw, 38px); font-weight: 800; }
+  .smeta-big.accent b { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .smeta-total-sub { margin-top: 18px; display: grid; gap: 6px; font-size: 13.5px; color: var(--muted); }
+  .smeta-total-sub b { color: var(--ink); }
+  .smeta-note { margin-top: 18px; font-size: 12.5px; color: var(--muted); }
+  @media (max-width: 640px) {
+    .smeta-bar { display: none; }
+    .smeta-dir summary { padding: 16px 18px; gap: 12px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -478,6 +534,7 @@
     </a>
     <div class="nav-tabs">
       <a class="tab active" href="index.html" aria-current="page">Проект</a>
+      <a class="tab" href="#smeta">Смета</a>
       <a class="tab" href="schema.html">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
         Схема ввода
@@ -770,6 +827,241 @@
     <figure class="gcard"><img src="photos/septik.jpg" alt="Септик Евролос Про 5" loading="lazy"><figcaption><b>Евролос Про 5</b>горловина станции биоочистки</figcaption></figure>
   </div>
   <div class="gprogress"><i id="gbar"></i></div>
+</section>
+
+<section class="section" id="smeta" style="background: var(--bg1);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">Смета</span>
+      <h2 class="sec-title">Материалы инженерки: полный расклад</h2>
+      <p class="sec-sub">Без работ, без чистовой отделки и техники. Цены — август 2026, розница (ЭТМ, Петрович, ВсеИнструменты, официальные магазины); источник — у каждой позиции. Метражи — проектные ориентиры для дома ~100 м².</p>
+    </div>
+    <div class="smeta-list">
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>1</b>Электрика — вводная часть (ЩУ, Штиль, ГРЩ)</span>
+          <span class="smeta-bar"><i style="width:22%"></i></span>
+          <span class="smeta-sum">327 974 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-plan">план</span>Стабилизатор Штиль ИнСтаб IS3120RT (20 кВА/16 кВт, «3 в 1»)</td><td>1</td><td>161 520</td><td class="smeta-rsum">161 520</td><td class="smeta-src"><a href="https://www.shtyl.ru/catalog/stabilizatory-napryazheniya/odnofaznye-3-v-1/is3120rt-20-kva-16-kvt/" target="_blank" rel="noopener">shtyl.ru</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Рубильник реверсивный 1-0-2 100А (EKF TwinBlock tb-s-100-3p-rev)</td><td>1</td><td>9 799</td><td class="smeta-rsum">9 799</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/4330696" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Кулачковый переключатель 32А 3-поз. (IEK ПКП32-13/О, байпас Штиля)</td><td>1</td><td>3 597</td><td class="smeta-rsum">3 597</td><td class="smeta-src"><a href="https://snabline.com" target="_blank" rel="noopener">snabline</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Реле напряжения 3ф Новатек РНПП-311М</td><td>1</td><td>2 603</td><td class="smeta-rsum">2 603</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/9762819" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Контактор модульный IEK КМ25-40МР 25А 4P</td><td>1</td><td>3 274</td><td class="smeta-rsum">3 274</td><td class="smeta-src"><a href="https://shop220.ru/mkk22-25-40-kontaktor-modulnyy-s-ruchnym-upravleniem-km25-40mr-25a-4-polyusa-4no-230v-ac-iek-3-modul.htm" target="_blank" rel="noopener">shop220</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>УЗИП класс I+II 3ф (12,5 кА, IEK) — в ЩУ</td><td>1</td><td>25 110</td><td class="smeta-rsum">25 110</td><td class="smeta-src"><a href="https://ie-spb.com/catalog/oborudovanie-nizkovoltnoe/ustroystva-zashchity-ot-impulsnykh-perenapryazheniy-uzip1535-i/" target="_blank" rel="noopener">ie-spb</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>УЗИП класс II 4P (IEK ОПС1-C) — в ГРЩ</td><td>1</td><td>8 007</td><td class="smeta-rsum">8 007</td><td class="smeta-src"><a href="https://e-kc.ru/cena/razrjadnik-ops1-c-4p-iek-mop20-4-c" target="_blank" rel="noopener">e-kc</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>УЗО селективное 4P 63А 300мА тип S (IEK ВД1-63S)</td><td>1</td><td>4 462</td><td class="smeta-rsum">4 462</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/product/ustrojstvo-zaschitnogo-otklyucheniya-iek-vd1-63s-uzo-4r-63a-300ma-mdv12-4-063-300-1437532/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Автомат 3P C25 (вводной, IEK ВА47-29)</td><td>1</td><td>520</td><td class="smeta-rsum">520</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/9532845" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Автомат 3P C20 (котёл)</td><td>1</td><td>665</td><td class="smeta-rsum">665</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/9695901" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Автоматы 1P C10</td><td>8</td><td>185</td><td class="smeta-rsum">1 480</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/9532795" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Автоматы 1P C16</td><td>16</td><td>185</td><td class="smeta-rsum">2 960</td><td class="smeta-src">там же</td></tr>
+            <tr><td><span class="st st-plan">план</span>УЗО 2P 40А 30мА тип А (групповые)</td><td>4</td><td>2 373</td><td class="smeta-rsum">9 492</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/6984783" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>УЗО 2P 16А 10мА тип А (влажные зоны)</td><td>2</td><td>2 421</td><td class="smeta-rsum">4 842</td><td class="smeta-src"><a href="https://shop220.ru/mdv11-2-016-010-uzo-vd1-63-2r-16a-10ma-tip-a-iek.htm" target="_blank" rel="noopener">shop220</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>ИБП on-line Штиль SW1000L (внешние АКБ)</td><td>1</td><td>25 570</td><td class="smeta-rsum">25 570</td><td class="smeta-src"><a href="https://www.ups-mag.ru/catalog/ups/shtyl/" target="_blank" rel="noopener">UPS-Mag</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>АКБ гелевая 12В 100Ач WBR GPLG12-100</td><td>2</td><td>21 095</td><td class="smeta-rsum">42 190</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/product/akkumulyatornaya-batareya-gelevaya-12-v-100-ach-wbr-gplg12-100-wbr-12544763/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Корпус ГРЩ IEK TITAN 5 ЩРн-60 IP54</td><td>1</td><td>18 441</td><td class="smeta-rsum">18 441</td><td class="smeta-src"><a href="https://www.mir-elektriki.ru/catalog/shhity-i-boksy/shhity/nastennye/iek_titan_5_korpus_metallicheskiy_shchit_shchrn_60_1kh60_835kh310kh140_ip54_belyy/" target="_blank" rel="noopener">mir-elektriki</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Щит учёта уличный ЩУ-1/1-0 IP54 (EKF)</td><td>1</td><td>3 442</td><td class="smeta-rsum">3 442</td><td class="smeta-src"><a href="https://ekfgroup.com/ru/catalog/products/shhit-uchetnyj-schetchik-na-din-rejku-shhu-1-1-0-250-300-100-ip54-ekf-proxima" target="_blank" rel="noopener">ekfgroup</a></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>2</b>Электрика — разводка по дому</span>
+          <span class="smeta-bar"><i style="width:11%"></i></span>
+          <span class="smeta-sum">167 162 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-plan">план</span>Кабель ВВГнг(А)-LS 3×1,5 (свет, септик)</td><td>300 м</td><td>70</td><td class="smeta-rsum">21 000</td><td class="smeta-src"><a href="https://xcabel.ru/products/vvgng-a-ls-3x1-5" target="_blank" rel="noopener">xcabel</a> (56–81)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Кабель ВВГнг(А)-LS 3×2,5 (розетки, техника, кондиционеры, скважина)</td><td>500 м</td><td>110</td><td class="smeta-rsum">55 000</td><td class="smeta-src"><a href="https://xcabel.ru/products/vvgng-a-ls-3x2-5" target="_blank" rel="noopener">xcabel</a> (95–127)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Кабель ВВГнг(А)-LS 5×4 (котёл)</td><td>15 м</td><td>330</td><td class="smeta-rsum">4 950</td><td class="smeta-src"><a href="https://www.a-cab.ru/catalog/kabel-provod/silovoy-kabel-s-nizkim-dymo-i-gazovydeleniem/vvgng_ls_5_4/" target="_blank" rel="noopener">a-cab</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Кабель ВВГнг(А)-LS 3×6 (генератор)</td><td>20 м</td><td>290</td><td class="smeta-rsum">5 800</td><td class="smeta-src"><a href="https://xcabel.ru/products/vvgng-a-ls-3x6" target="_blank" rel="noopener">xcabel</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Провод ПуГВ 1×16 (перемычки ГРЩ)</td><td>10 м</td><td>220</td><td class="smeta-rsum">2 200</td><td class="smeta-src"><a href="https://e-kc.ru/cena/provod-pugv-16" target="_blank" rel="noopener">e-kc</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Гофра ПВХ Ø20 с протяжкой</td><td>400 м</td><td>25</td><td class="smeta-rsum">10 000</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/87860020" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Гофра ПВХ Ø16 с протяжкой</td><td>100 м</td><td>18</td><td class="smeta-rsum">1 800</td><td class="smeta-src">ЭТМ</td></tr>
+            <tr><td><span class="st st-plan">план</span>Гофра Ø25–32 (чердак, репитер, закладные)</td><td>30 м</td><td>33</td><td class="smeta-rsum">990</td><td class="smeta-src">оценка по ЭТМ</td></tr>
+            <tr><td><span class="st st-plan">план</span>Подрозетники глубокие 68×60</td><td>80</td><td>27</td><td class="smeta-rsum">2 160</td><td class="smeta-src"><a href="https://petrovich.ru/catalog/285395734/hegel/" target="_blank" rel="noopener">Петрович</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Розетки в сборе (Schneider AtlasDesign)</td><td>45</td><td>450</td><td class="smeta-rsum">20 250</td><td class="smeta-src"><a href="https://www.ozon.ru/category/rozetki-shnayder-s-zazemleniem/" target="_blank" rel="noopener">Ozon</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Выключатели в сборе (AtlasDesign)</td><td>15</td><td>400</td><td class="smeta-rsum">6 000</td><td class="smeta-src"><a href="https://systeme.ru/product/ATN000111" target="_blank" rel="noopener">systeme</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Розетка уличная IP66 с крышкой</td><td>3</td><td>1 450</td><td class="smeta-rsum">4 350</td><td class="smeta-src"><a href="https://komplekt-el.ru/rozetka-vlagozashchishchennaya-ulichnaya-naruzhnaya-2-ya-ip66-s-kryshkoy/" target="_blank" rel="noopener">komplekt-el</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Фотореле ФР-7Е с выносным датчиком</td><td>1</td><td>1 510</td><td class="smeta-rsum">1 510</td><td class="smeta-src"><a href="https://glavrele.ru/catalog/svet/foto_rele/fr_7e/" target="_blank" rel="noopener">glavrele</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Датчик движения (ночная подсветка, крыльцо)</td><td>3</td><td>900</td><td class="smeta-rsum">2 700</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/tag-page/nastenno-potolochnye-datchiki-dvizheniya-dlya-vklyucheniya-sveta-67822/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Шкаф слаботочный (бокс 400×300 IP65 с платой)</td><td>1</td><td>4 419</td><td class="smeta-rsum">4 419</td><td class="smeta-src"><a href="https://rtk-nt.ru/catalog/shchitovoe_oborudovanie/shchitovoe_oborudovanie_gotovoe/shchity_raspredelitelnye/shchity_raspredelitelnye_plastikovye/boks_plastikovyy_s_montazhnoy_platoy_400kh300kh170_mm_ip65_proxima/" target="_blank" rel="noopener">rtk-nt</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Витая пара UTP cat5e внутренняя, медь, 305 м</td><td>1</td><td>14 383</td><td class="smeta-rsum">14 383</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/tag-page/kabel-vitaya-para-buhta-305m-2439345/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Витая пара внешняя PE/FTP, 305 м (калитка, камеры)</td><td>1</td><td>8 850</td><td class="smeta-rsum">8 850</td><td class="smeta-src">Оптима Екб (из выдачи)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Коробки распайные IP66 уличные</td><td>5</td><td>160</td><td class="smeta-rsum">800</td><td class="smeta-src"><a href="https://e-kc.ru/cena/korobka-raspredelitelnaya-multibox-ip-hh-diy-so-stikerom-ser-se-imt-apc__3" target="_blank" rel="noopener">e-kc</a></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>3</b>Отопление (тёплые полы, 7 зон)</span>
+          <span class="smeta-bar"><i style="width:18%"></i></span>
+          <span class="smeta-sum">271 527 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-fact">куплено</span>Электрокотёл Thermex Boss 12 Wi-Fi</td><td>1</td><td>39 990</td><td class="smeta-rsum">39 990</td><td class="smeta-src"><a href="https://shop.thermex.ru/catalog/elektricheskie-kotly/thermex-boss-12-wi-fi-white" target="_blank" rel="noopener">shop.thermex.ru</a></td></tr>
+            <tr><td><span class="st st-fact">куплено</span>БКН STOUT настенный 100 л (SWH-1210-000100)</td><td>1</td><td>63 504</td><td class="smeta-rsum">63 504</td><td class="smeta-src"><a href="https://www.stout.ru/catalog/vodonagrevateli/vodonagrevateli-nastennye/stout-boyler-kosvennogo-nagreva-nastennyy-100-l/" target="_blank" rel="noopener">stout.ru</a></td></tr>
+            <tr><td><span class="st st-fact">куплено</span>Коллектор ТП 7 контуров с расходомерами (STOUT SMS)</td><td>1</td><td>20 421</td><td class="smeta-rsum">20 421</td><td class="smeta-src"><a href="https://stroyteplo.online/catalog/kollektory_i_kollektornye_gruppy/kollektory/17568/" target="_blank" rel="noopener">СтройТепло</a></td></tr>
+            <tr><td><span class="st st-fact">куплено</span>Шкаф коллекторный ШРН-7 (STOUT)</td><td>1</td><td>9 152</td><td class="smeta-rsum">9 152</td><td class="smeta-src"><a href="https://www.stout.ru/catalog/montazhnye-shkafy/" target="_blank" rel="noopener">stout.ru</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба PEX-a 16×2,0 STOUT (петли)</td><td>650 м</td><td>152</td><td class="smeta-rsum">98 800</td><td class="smeta-src"><a href="https://25kw.ru/catalog/truby_dlya_teplogo_pola/" target="_blank" rel="noopener">25kw</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>ЭППС 30 мм (Технониколь Carbon Eco)</td><td>100 м²</td><td>300</td><td class="smeta-rsum">30 000</td><td class="smeta-src"><a href="https://petrovich.ru/product/147314/" target="_blank" rel="noopener">Петрович</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Демпферная лента 150 мм</td><td>120 м</td><td>28</td><td class="smeta-rsum">3 360</td><td class="smeta-src"><a href="https://mnogo-tepla.ru/product/dempfernaya-lenta/" target="_blank" rel="noopener">МногоТепла</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Датчик пола NTC 10 кОм (основной + запасной на зону)</td><td>14</td><td>450</td><td class="smeta-rsum">6 300</td><td class="smeta-src"><a href="https://termomat.ru/termoregulyatory/datchik-temperatury-ntc.php" target="_blank" rel="noopener">termomat</a></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>3б</b>Отопление — этап 2 (электроника зон, позже)</span>
+          <span class="smeta-bar"><i style="width:2%"></i></span>
+          <span class="smeta-sum">36 929 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-plan">план</span>Термостат проводной Terneo mex</td><td>7</td><td>2 366</td><td class="smeta-rsum">16 562</td><td class="smeta-src"><a href="https://teplypol-market.ru/termoregulyatory/terneo-mex" target="_blank" rel="noopener">teplypol-market</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Сервопривод NC 230В Valtec VT.TE3043</td><td>7</td><td>2 016</td><td class="smeta-rsum">14 112</td><td class="smeta-src"><a href="https://valtec.ru/catalog/radiatornaya_armatura/termogolovki_i_servoprivody/" target="_blank" rel="noopener">valtec.ru</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Коммутационный блок Salus KL06-M (с выходом на котёл)</td><td>1</td><td>6 255</td><td class="smeta-rsum">6 255</td><td class="smeta-src"><a href="https://feniks-trade.ru/upravlyayushie-moduli/moduli-upravleniya-kl06-m230v-salus" target="_blank" rel="noopener">Феникс-Трейд</a></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>4</b>Водоснабжение</span>
+          <span class="smeta-bar"><i style="width:9%"></i></span>
+          <span class="smeta-sum">136 529 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-maybe">есть?</span>Насос скважинный Джилекс Водомёт ПРОФ 110/110</td><td>1</td><td>29 950</td><td class="smeta-rsum">29 950</td><td class="smeta-src"><a href="https://tdkomfort.ru/shop/product/nasos-skvazhinnyj-dzhileks-vodomet-prof-110-110/" target="_blank" rel="noopener">ТД Комфорт</a></td></tr>
+            <tr><td><span class="st st-maybe">есть?</span>Гидроаккумулятор Джилекс В 80</td><td>1</td><td>6 500</td><td class="smeta-rsum">6 500</td><td class="smeta-src"><a href="https://jeelex-shop.ru/gidroakkumulyator-jeelex-80v-vertikalnyj-metallicheskij-flanec" target="_blank" rel="noopener">jeelex-shop</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Реле давления РДМ-5 + 2 манометра</td><td>1</td><td>2 020</td><td class="smeta-rsum">2 020</td><td class="smeta-src"><a href="https://www.rusklimat.ru/product/rele-davleniya-dzhileks-pdm-5-2-kh-polyusnoe-1-4-4-6-atm" target="_blank" rel="noopener">Русклимат</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Редуктор давления Valtec VT.087.N 1/2&quot;</td><td>1</td><td>1 313</td><td class="smeta-rsum">1 313</td><td class="smeta-src"><a href="https://ryazan.lemanapro.ru/product/reduktor-davleniya-valtec-porshnevoy-1-2-12519440/" target="_blank" rel="noopener">ЛеманаПРО</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Фильтр косой Valtec VT.192.N 1&quot;</td><td>1</td><td>1 216</td><td class="smeta-rsum">1 216</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/product/kosoj-filtr-1-valtec-vt-192-n-06-827203/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Обратный клапан Valtec VT.151.N 1&quot;</td><td>1</td><td>1 100</td><td class="smeta-rsum">1 100</td><td class="smeta-src"><a href="https://www.etm.ru/cat/nn/3218321" target="_blank" rel="noopener">ЭТМ</a></td></tr>
+            <tr><td><span class="st st-fact">куплено</span>Гребёнки с шаровыми кранами 4 вых. (ХВС+ГВС)</td><td>2</td><td>3 475</td><td class="smeta-rsum">6 950</td><td class="smeta-src"><a href="https://www.stout.ru/catalog/kollektory-i-kollektornye-gruppy/" target="_blank" rel="noopener">stout.ru</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба PEX-a 20×2,8 (лучи к точкам)</td><td>150 м</td><td>247</td><td class="smeta-rsum">37 050</td><td class="smeta-src"><a href="https://market.yandex.ru/search?text=VA2028.3.C.100" target="_blank" rel="noopener">Я.Маркет</a> (из выдачи)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба PEX-a 25×3,5 (магистрали)</td><td>30 м</td><td>400</td><td class="smeta-rsum">12 000</td><td class="smeta-src"><a href="https://www.stout.ru/catalog/truby-i-fitingi/truby-iz-sshitogo-polietilena/truba-pex-a/" target="_blank" rel="noopener">stout.ru</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Трап в пол котельной, сухой затвор (Alcaplast APV26C)</td><td>1</td><td>3 800</td><td class="smeta-rsum">3 800</td><td class="smeta-src"><a href="https://metal-san.ru/trap-alcaplast-apv26c-suhoy-zatvor/" target="_blank" rel="noopener">metal-san</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Защита от протечек Neptun Bugatti Base 1/2&quot; + 4-й датчик</td><td>1</td><td>26 630</td><td class="smeta-rsum">26 630</td><td class="smeta-src"><a href="https://www.rusklimat.ru/product/sistema-neptun-bugatti-base-1-2" target="_blank" rel="noopener">Русклимат</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Фитинги PEX (аксиальные, лот)</td><td>1</td><td>8 000</td><td class="smeta-rsum">8 000</td><td class="smeta-src">оценка</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>5</b>Водоподготовка</span>
+          <span class="smeta-bar"><i style="width:5%"></i></span>
+          <span class="smeta-sum">75 573 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-fact">куплено</span>Обезжелезиватель 1044 + Runxin F67B + загрузка (сборка)</td><td>1</td><td>29 000</td><td class="smeta-rsum">29 000</td><td class="smeta-src"><a href="https://www.ekodar.ru/filter/oborudovanie/runxin/" target="_blank" rel="noopener">ekodar</a> (21 000–36 800)</td></tr>
+            <tr><td><span class="st st-fact">куплено</span>Умягчитель 1044 + Runxin F65P + солевой бак</td><td>1</td><td>24 767</td><td class="smeta-rsum">24 767</td><td class="smeta-src"><a href="https://rosvoda.com/products/komplekt-umyagcheniya-rosvoda-1044-runxin-tm-f65p3-canature-do-1-m3-ch" target="_blank" rel="noopener">rosvoda</a></td></tr>
+            <tr><td><span class="st st-fact">куплено</span>Корпус Big Blue 20&quot; 1&quot; с кронштейном</td><td>1</td><td>4 038</td><td class="smeta-rsum">4 038</td><td class="smeta-src"><a href="https://www.termoclub.ru/catalog/vodopodgotovka/" target="_blank" rel="noopener">termoclub</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Картридж механический BB20</td><td>1</td><td>500</td><td class="smeta-rsum">500</td><td class="smeta-src"><a href="https://teplo-dom.ru/" target="_blank" rel="noopener">teplo-dom</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Корпус Big Blue 20&quot; (угольная ступень) + картридж угольный</td><td>1</td><td>4 988</td><td class="smeta-rsum">4 988</td><td class="smeta-src">barrier.ru (корпус 4 038 + картридж 950)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Осмос Гейзер Аллегро М (питьевая)</td><td>1</td><td>10 980</td><td class="smeta-rsum">10 980</td><td class="smeta-src"><a href="https://www.vseinstrumenti.ru/product/sistema-obratnogo-osmosa-plastikovyj-bak-gejzer-allegro-m-20037-2024841/" target="_blank" rel="noopener">ВсеИнструменты</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Соль таблетированная 25 кг</td><td>2</td><td>650</td><td class="smeta-rsum">1 300</td><td class="smeta-src">щепакора.рф</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>6</b>Канализация</span>
+          <span class="smeta-bar"><i style="width:12%"></i></span>
+          <span class="smeta-sum">189 919 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-fact">куплено</span>Септик Евролос Про 5 (оборудование)</td><td>1</td><td>158 700</td><td class="smeta-rsum">158 700</td><td class="smeta-src"><a href="https://lemanapro.ru/product/septik-evrolos-pro-5-2600l-chernyy-92084761/" target="_blank" rel="noopener">ЛеманаПРО</a> (офиц. 171 500, дилер от 148 400)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба наружная ПВХ Ø110 SN4</td><td>20 м</td><td>500</td><td class="smeta-rsum">10 000</td><td class="smeta-src"><a href="https://petrovich.ru/catalog/157942548/" target="_blank" rel="noopener">Петрович</a> (386–640)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба внутренняя Ø110</td><td>10 м</td><td>300</td><td class="smeta-rsum">3 000</td><td class="smeta-src">Петрович</td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба внутренняя Ø50</td><td>25 м</td><td>130</td><td class="smeta-rsum">3 250</td><td class="smeta-src">ЛеманаПРО (87–180)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Ревизия ПВХ Ø110</td><td>3</td><td>380</td><td class="smeta-rsum">1 140</td><td class="smeta-src"><a href="https://www.sds-center.ru/goods/revizija-diametr-110-mm" target="_blank" rel="noopener">sds-center</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Тройники, отводы, манжеты (лот)</td><td>1</td><td>2 000</td><td class="smeta-rsum">2 000</td><td class="smeta-src">оценка по Петровичу</td></tr>
+            <tr><td><span class="st st-plan">план</span>Обратный клапан канализационный Ø110</td><td>1</td><td>2 800</td><td class="smeta-rsum">2 800</td><td class="smeta-src"><a href="https://www.santexbaza.ru/" target="_blank" rel="noopener">santexbaza</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Проходной элемент кровли Ø110 (фановый выход)</td><td>1</td><td>1 430</td><td class="smeta-rsum">1 430</td><td class="smeta-src"><a href="https://tatpolimer.ru/productions/prohodnye-elementy/" target="_blank" rel="noopener">tatpolimer</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Колодец приёмный Ø315×1000 (промывки мимо септика)</td><td>1</td><td>2 799</td><td class="smeta-rsum">2 799</td><td class="smeta-src"><a href="https://www.sds-center.ru/catalog/kolodcy-plastikovye/drenazhnye/315-mm" target="_blank" rel="noopener">sds-center</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Сифоны с сухим затвором (редкие точки)</td><td>2</td><td>2 400</td><td class="smeta-rsum">4 800</td><td class="smeta-src"><a href="https://www.santehnica.ru/catalog/komplektuyushchie/sifon/suhie/" target="_blank" rel="noopener">santehnica.ru</a></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>7</b>Участок (закладные, дренаж, ливнёвка, освещение)</span>
+          <span class="smeta-bar"><i style="width:5%"></i></span>
+          <span class="smeta-sum">77 080 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-plan">план</span>Труба ПНД техническая Ø50 (пустышки, вода к бане)</td><td>60 м</td><td>74</td><td class="smeta-rsum">4 440</td><td class="smeta-src"><a href="https://www.s-logika.ru/goods/18356860-truba_pnd_tekhnicheskaya_50_kh_3_0_mm" target="_blank" rel="noopener">s-logika</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба ПНД техническая Ø32 (кабельные трассы)</td><td>40 м</td><td>40</td><td class="smeta-rsum">1 600</td><td class="smeta-src"><a href="https://trubovik.ru" target="_blank" rel="noopener">trubovik</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Кабель ВБбШвнг(А) 3×2,5 (освещение участка, калитка)</td><td>80 м</td><td>130</td><td class="smeta-rsum">10 400</td><td class="smeta-src"><a href="https://xcabel.ru/products/vbbshvnga-3x2-5" target="_blank" rel="noopener">xcabel</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Кабель ВБбШвнг(А) 3×4 (закладная к бане)</td><td>30 м</td><td>188</td><td class="smeta-rsum">5 640</td><td class="smeta-src"><a href="https://xcabel.ru/products/vbbshvnga-3x4" target="_blank" rel="noopener">xcabel</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Дрена перфорированная Ø110 в геотекстиле</td><td>45 м</td><td>140</td><td class="smeta-rsum">6 300</td><td class="smeta-src"><a href="https://vimos.ru/product/truba-drenaznaa-sn4-d-110-mm-s-perforaciej-v-geotekstile" target="_blank" rel="noopener">vimos</a> (119–165)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Колодец смотровой дренажный Ø315 h2</td><td>2</td><td>3 000</td><td class="smeta-rsum">6 000</td><td class="smeta-src"><a href="https://www.s-logika.ru" target="_blank" rel="noopener">s-logika</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Геотекстиль 300 г/м²</td><td>60 м²</td><td>55</td><td class="smeta-rsum">3 300</td><td class="smeta-src"><a href="https://geofabrika.ru" target="_blank" rel="noopener">geofabrika</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Дождеприёмник пластиковый с решёткой</td><td>4</td><td>650</td><td class="smeta-rsum">2 600</td><td class="smeta-src"><a href="https://gidrogroup.ru/product-category/поверхностный-водоотвод/дождеприемники/" target="_blank" rel="noopener">gidrogroup</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Труба ПВХ Ø110 наружная (ливнёвка)</td><td>25 м</td><td>500</td><td class="smeta-rsum">12 500</td><td class="smeta-src">Петрович</td></tr>
+            <tr><td><span class="st st-plan">план</span>Колодец ливневый приёмный Ø460 h3</td><td>1</td><td>9 500</td><td class="smeta-rsum">9 500</td><td class="smeta-src"><a href="https://www.s-logika.ru" target="_blank" rel="noopener">s-logika</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Светильник уличный настенный IP65</td><td>4</td><td>1 500</td><td class="smeta-rsum">6 000</td><td class="smeta-src">ЛеманаПРО (380–2 600, оценка среднего)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Столбик садовый</td><td>4</td><td>2 200</td><td class="smeta-rsum">8 800</td><td class="smeta-src">Ozon/ЯМ (750–6 050, оценка среднего)</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <details class="smeta-dir reveal">
+        <summary>
+          <span class="smeta-name"><b>8</b>Резервное питание и слаботочное оборудование</span>
+          <span class="smeta-bar"><i style="width:18%"></i></span>
+          <span class="smeta-sum">278 596 ₽</span>
+          <svg class="smeta-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="smeta-scroll"><table class="smeta-table">
+          <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена, ₽</th><th>Сумма, ₽</th><th>Источник</th></tr></thead>
+          <tbody>
+            <tr><td><span class="st st-plan">план</span>Генератор инверторный Fubag TI 7000 A ES (6,5 кВт, э/старт)</td><td>1</td><td>128 920</td><td class="smeta-rsum">128 920</td><td class="smeta-src"><a href="https://generator.market/catalog/generatory/invertornye/7-kwt/" target="_blank" rel="noopener">generator.market</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Короб шумозащитный всепогодный Silent Box SB1200SK</td><td>1</td><td>65 000</td><td class="smeta-rsum">65 000</td><td class="smeta-src"><a href="https://silentbox.ru/collection/Кожух-для-бензинового-генератора/" target="_blank" rel="noopener">silentbox.ru</a> (из выдачи)</td></tr>
+            <tr><td><span class="st st-plan">план</span>NVR HiWatch DS-N208P(C) 8 кан., PoE</td><td>1</td><td>8 877</td><td class="smeta-rsum">8 877</td><td class="smeta-src"><a href="https://www.ozon.ru/category/hiwatch-ds-n208-b/" target="_blank" rel="noopener">Ozon</a> (из выдачи)</td></tr>
+            <tr><td><span class="st st-plan">план</span>IP-камера PoE 4 Мп HiWatch DS-I450</td><td>4</td><td>9 000</td><td class="smeta-rsum">36 000</td><td class="smeta-src"><a href="https://hikvision24.ru/videokamery/hiwatch/tsilindricheskie-4-mp/" target="_blank" rel="noopener">hikvision24</a> (акции от 4 800)</td></tr>
+            <tr><td><span class="st st-plan">план</span>Коммутатор PoE TP-Link TL-SG108PE</td><td>1</td><td>6 949</td><td class="smeta-rsum">6 949</td><td class="smeta-src"><a href="https://www.citilink.ru/product/kommutator-tp-link-tl-sg108pe-upravlyaemyi-403219/" target="_blank" rel="noopener">Ситилинк</a></td></tr>
+            <tr><td><span class="st st-plan">план</span>Репитер 4G Baltic Signal BS-4G-75-kit (опция)</td><td>1</td><td>32 850</td><td class="smeta-rsum">32 850</td><td class="smeta-src"><a href="https://blueset.ru/product/usilitel-sotovoy-svyazi-baltic-signal-bs-4g-75-kit" target="_blank" rel="noopener">blueset</a> (из выдачи)</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+    </div>
+    <div class="smeta-total reveal">
+      <div class="smeta-total-main">
+        <div class="smeta-big"><span>Всего материалы</span><b>1 524 360 ₽</b></div>
+        <div class="smeta-big accent"><span>С резервом 15%</span><b>≈ 1 795 500 ₽</b></div>
+      </div>
+      <div class="smeta-total-sub">
+        <span>Уже вложено (котёл, БКН, коллекторы, водоочистка, септик): <b>≈ 356 500 ₽</b></span>
+        <span>Этап 2 отопления (термостаты, приводы, блок — после первого сезона): <b>+36 929 ₽</b></span>
+        <span>Отложить безболезненно можно: генератор, камеры, репитер — <b>278 596 ₽</b> из раздела 8</span>
+      </div>
+    </div>
+    <p class="smeta-note reveal">Не оценено осознанно: реле приоритета (модель не выбрана), незамерзающий кран полива, щебень/песок для дренажа, вентиляция (не спроектирована). Часть цен маркетплейсов — «из выдачи», при покупке перепроверить.</p>
+  </div>
 </section>
 
 <section class="section" id="roadmap" style="background: var(--bg1);">
