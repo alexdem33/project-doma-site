@@ -60,6 +60,8 @@
 
   .node { cursor: pointer; transition: filter .18s ease; }
   .node:hover { filter: brightness(1.06) drop-shadow(0 3px 6px rgba(0,0,0,.18)); }
+  .node:focus { outline: none; }
+  .node:focus-visible rect.box { stroke-width: 3.5; stroke-dasharray: 5 3; }
   .node.selected rect.box { stroke-width: 3.5; }
   .node .num { font-weight: 700; }
   .node text { pointer-events: none; }
@@ -74,7 +76,7 @@
   @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
 
   aside.detail {
-    position: sticky; top: 20px;
+    position: sticky; top: 64px;
     background: var(--panel); border: 1px solid var(--line);
     border-radius: 14px; padding: 20px;
     min-height: 300px;
@@ -211,9 +213,14 @@
     </svg>
   </div>
 
-  <aside class="detail" id="detail">
+  <aside class="detail" id="detail" aria-live="polite">
     <div class="hint">Кликните по узлу схемы — здесь появятся детали: что это, зачем нужно, наименование и номиналы.</div>
   </aside>
+  <noscript>
+    <p style="padding:16px 24px;color:#b3261e;font-weight:600;">
+      Для интерактивной схемы нужен включённый JavaScript — без него узлы схемы не отрисуются.
+    </p>
+  </noscript>
 </div>
 
 <footer>
@@ -382,6 +389,9 @@ NODES.forEach(n => {
   const h = BOX_H;
   const grp = document.createElementNS(svgNS, "g");
   grp.setAttribute("class", "node");
+  grp.setAttribute("tabindex", "0");
+  grp.setAttribute("role", "button");
+  grp.setAttribute("aria-label", n.id + ". " + n.title);
   grp.dataset.id = n.id;
 
   const rect = document.createElementNS(svgNS, "rect");
@@ -435,6 +445,9 @@ NODES.forEach(n => {
   });
 
   grp.addEventListener("click", () => select(n.id, true));
+  grp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(n.id, true); }
+  });
   g.appendChild(grp);
 });
 
