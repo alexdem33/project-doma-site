@@ -113,8 +113,37 @@
     color: var(--muted); font-size: 13px;
   }
 
+  /* ---------- сценарии «Как этим жить» ---------- */
+  .scenarios { max-width: 1760px; margin: 0 auto; padding: 0 24px 40px; }
+  .scenarios h2 { font-size: 20px; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .scn-sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+  .scn-layout {
+    display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 24px;
+    align-items: start;
+  }
+  .scn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .scn-card {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px; cursor: pointer;
+    transition: box-shadow .18s ease, border-color .18s ease;
+  }
+  .scn-card:hover { box-shadow: 0 4px 14px rgba(28,37,48,.12); }
+  .scn-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,.25); }
+  .scn-num {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .scn-card h3 { font-size: 15.5px; margin-bottom: 2px; }
+  .scn-card .scn-tag { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .scn-card p { color: var(--muted); font-size: 13px; line-height: 1.45; }
+  aside.detail .steps { padding-left: 20px; display: grid; gap: 6px; font-size: 14.5px; }
+
   @media (max-width: 980px) {
     .layout { grid-template-columns: 1fr; }
+    .scn-layout { grid-template-columns: 1fr; }
     aside.detail { position: static; }
   }
 </style>
@@ -250,6 +279,17 @@
     </p>
   </noscript>
 </div>
+
+<section class="scenarios">
+  <h2>Как этим жить: сценарии</h2>
+  <p class="scn-sub">Что работает от сети, от ИБП и от генератора — и что делать в каждом режиме. Клик по карточке — подробности.</p>
+  <div class="scn-layout">
+    <div class="scn-grid" id="scnGrid"></div>
+    <aside class="detail" id="scnDetail">
+      <div class="hint">Выберите сценарий слева — здесь появятся шаги, точки трения и запасной выход.</div>
+    </aside>
+  </div>
+</section>
 
 <footer>
   Схема носит проектный характер — перед реализацией сверяйтесь с действующими СП/ПУЭ и требованиями сетевой организации.
@@ -532,8 +572,106 @@ function select(id, byUser) {
   }
 }
 
+// --- Сценарии «Как этим жить» ---
+const SCENARIOS = [
+  { id:1, title:"Этап 1: дом на байпасе", tag:"Штиль ещё не куплен", freq:"сейчас, 100% времени",
+    short:"Вся ветка дома на одной фазе ввода, потолок ~5,5 кВт; котёл живёт своей трёхфазной веткой",
+    steps:[
+      "Кулачковый переключатель в положении «сеть» — дом напрямую от ввода",
+      "Котёл греет по ветке А: перемычка на термостатном входе + уставка подачи 40–45 °C",
+      "Обрыв нуля в посёлковой сети гасит реле напряжения 1ф в ГРЩ — техника защищена",
+    ],
+    friction:"Дисциплина одновременной нагрузки: варочная + духовка + стиралка вместе выбьют вводной 25А. Две из трёх — норм.",
+    fallback:"Выбило вводной — вернуть автомат в ЩУ и снять лишнюю нагрузку." },
+  { id:2, title:"Штатно: сеть посёлка", tag:"Нулевое трение", freq:"~90% времени после этапа 2",
+    short:"Штиль выдаёт одну чистую фазу на весь дом, котёл — мимо него; перекосы посёлка не замечаешь",
+    steps:[
+      "Весь дом — на стабилизированной фазе со Штиля, балансировка фаз не нужна",
+      "Котёл напрямую от трёх фаз — ТЭНам качество сети безразлично",
+      "Пик нагрузки (духовка + чайник + фен) → реле приоритета молча гасит нагрев котла; плата, насос и Wi-Fi котла работают",
+      "Гроза и импульсы → УЗИП I+II на улице + УЗИП II в ГРЩ",
+    ],
+    friction:"Нет — ты ничего не делаешь.",
+    fallback:"Штиль ушёл в защиту или отказал — сценарий «Ремонт Штиля: байпас»." },
+  { id:3, title:"Блэкаут: ИБП держит критичное", tag:"Свет погас — дом не умер", freq:"редко, первые 1–2 ч отключения",
+    short:"Роутер, охрана, автоматика ТП и колонн, компрессор септика — на ИБП; холодильник просто молчит",
+    steps:[
+      "ИБП мгновенно держит ~300–450 Вт: связь, охрана, автоматика отопления и водоочистки, аэрация септика",
+      "Холодильник без ИБП: закрытый держит холод 4+ часов",
+      "Отопление встаёт: котёл на ветке А, ИБП его не покрывает — зимой за пару часов дом не остынет",
+      "Отключение длинное — идёшь запускать генератор",
+    ],
+    friction:"Ручной запуск: выйти к коробу генератора, рубильник 1-0-2 — в положение «2».",
+    fallback:"Генератор не завёлся / нет бензина — глушим всё лишнее, живём на ИБП, ждём сеть." },
+  { id:4, title:"Генератор: жизнь на резерве", tag:"Рубильник в «2»", freq:"часы-дни в год",
+    short:"Весь дом на одной фазе генератора ~6,5 кВт, мимо Штиля; ИБП выправляет синусоиду",
+    steps:[
+      "Дом целиком на генераторе: у него своя регулировка напряжения, Штиль обойдён",
+      "ИБП продолжает работать и чистит «грязную» синусоиду для чувствительной электроники",
+      "Сеть вернулась: рубильник в «1», генератор глушим и даём остыть",
+    ],
+    friction:"Котёл от генератора не работает (ветка трёхфазная) — отопления нет. ТЭН БКН включать только вручную: 2–3 кВт — треть генератора. Мощные потребители — по очереди.",
+    fallback:"Запасной ход: котёл допускает 1ф до 8 кВт (перемычки L1-L2-L3 + DIP на плате) — разовая перенастройка, решение при покупке генератора." },
+  { id:5, title:"Ремонт Штиля: байпас", tag:"Кулачок в «сеть»", freq:"надеемся, никогда",
+    short:"Дом напрямую от ввода, потолок 5,5 кВт; котёл и отопление не затронуты",
+    steps:[
+      "Кулачковый переключатель: «Штиль» → «сеть» (случайно не щёлкнуть — механизм кулачковый)",
+      "Котёл продолжает греть — он на отдельной ветке",
+      "Штиль вернулся — кулачок обратно в «Штиль»",
+    ],
+    friction:"Как на этапе 1: дисциплина одновременной нагрузки до возврата Штиля.",
+    fallback:"Долгий ремонт — живём в режиме 5,5 кВт; при блэкауте работает сценарий с генератором." },
+  { id:6, title:"Разовые настройки", tag:"Сделал и забыл", freq:"один раз, при монтаже",
+    short:"Пороги реле, перемычка котла, маркировка концов — фиксируем при сборке щита",
+    steps:[
+      "При сборке щита: пороги реле приоритета, уставки РН 3ф и 1ф, замер сопротивления контура заземления",
+      "Перемычка термостата котла + уставка 40–45 °C — записать в паспорт объекта (снять на этапе 2 при установке зональной автоматики)",
+      "Маркировка концов в ГРЩ — до закрытия отделки",
+      "При покупке генератора: сверить макс. ток модели (закладная 3×6 — до ~40А)",
+    ],
+    friction:"Забыть записать перемычку — на этапе 2 будешь гадать, почему котёл не греет.",
+    fallback:"Что-то не записано — сверяться с этой страницей и паспортом объекта." },
+];
+
+const scnGrid = document.getElementById("scnGrid");
+SCENARIOS.forEach(s => {
+  const card = document.createElement("div");
+  card.className = "scn-card";
+  card.dataset.id = s.id;
+  card.innerHTML = `
+    <div class="scn-num">${s.id}</div>
+    <div>
+      <h3>${s.title}</h3>
+      <div class="scn-tag">${s.tag}</div>
+      <p>${s.short}</p>
+    </div>`;
+  card.addEventListener("click", () => selectScn(s.id, true));
+  scnGrid.appendChild(card);
+});
+
+function selectScn(id, byUser) {
+  document.querySelectorAll(".scn-card").forEach(el => el.classList.remove("selected"));
+  const el = document.querySelector(`.scn-card[data-id="${id}"]`);
+  if (el) el.classList.add("selected");
+  const s = SCENARIOS.find(v => v.id === id);
+  document.getElementById("scnDetail").innerHTML = `
+    <span class="badge" style="background:#2563eb">${s.freq}</span>
+    <h3>${s.title}</h3>
+    <div class="tagline">${s.tag}</div>
+    <dl>
+      <div><dt>Как это выглядит</dt><dd><ol class="steps">${s.steps.map(st => `<li>${st}</li>`).join("")}</ol></dd></div>
+      <div><dt>Точки трения</dt><dd>${s.friction}</dd></div>
+      <div><dt>Если всё сломалось</dt><dd>${s.fallback}</dd></div>
+    </dl>
+    <div class="hint">Клик по другой карточке — следующий сценарий.</div>`;
+  if (byUser && window.innerWidth <= 980) {
+    document.getElementById("scnDetail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
 // Стартовый выбор — сердце схемы
 select(10);
+selectScn(2);
 </script>
 </body>
 </html>
