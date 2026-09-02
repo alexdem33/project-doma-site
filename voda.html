@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Схема ввода воды и водоподготовки дома</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --panel: #ffffff;
+    --ink: #1c2530;
+    --muted: #5b6b7d;
+    --line: #d4dce4;
+    --z1: #2f5f8f;
+    --z1-bg: #e8f0f8;
+    --z2: #7a5fa0;
+    --z2-bg: #f0eaf7;
+    --z3: #0e7c86;
+    --z3-bg: #e2f1f3;
+    --z4: #1e7a5a;
+    --z4-bg: #e6f4ee;
+    --future: #7d8894;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  header {
+    max-width: 1760px; margin: 0 auto; padding: 32px 24px 8px;
+  }
+  header h1 { font-size: 26px; letter-spacing: -0.02em; }
+  header p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+
+  .legend {
+    max-width: 1760px; margin: 10px auto 0; padding: 0 24px;
+    display: flex; flex-wrap: wrap; gap: 8px 22px;
+    color: var(--muted); font-size: 13.5px;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+  .chip {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 20px;
+  }
+  .chip-s1 { background: #2563eb; color: #fff; }
+  .chip-s2 { background: #fff; color: #7d8894; border: 1.4px dashed #7d8894; }
+
+  .agenda {
+    max-width: 1760px; margin: 20px auto; padding: 0 24px;
+  }
+  .agenda-inner {
+    background: linear-gradient(135deg, #1c2530, #2c3a4d);
+    color: #eef2f7; border-radius: 14px; padding: 22px 26px;
+    box-shadow: 0 6px 24px rgba(28,37,48,.18);
+  }
+  .agenda-inner h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: #8fb4dd; margin-bottom: 12px; }
+  .agenda-inner ol { padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
+  .agenda-inner b { color: #ffd591; }
+
+  .layout {
+    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
+    display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 24px;
+    align-items: start;
+  }
+  .scheme-card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px; overflow-x: auto;
+  }
+  svg { display: block; min-width: 900px; width: 100%; height: auto; }
+
+  .node { cursor: pointer; transition: filter .18s ease; }
+  .node:hover { filter: brightness(1.06) drop-shadow(0 3px 6px rgba(0,0,0,.18)); }
+  .node.selected rect.box { stroke-width: 3.5; }
+  .node .num { font-weight: 700; }
+  .node:focus { outline: none; }
+  .node:focus-visible rect.box { stroke-width: 3.5; stroke-dasharray: 5 3; }
+  .node text { pointer-events: none; }
+
+  .flow {
+    stroke: #9aa8b6; stroke-width: 2.5; fill: none;
+    stroke-dasharray: 7 6;
+    animation: dashmove 1.6s linear infinite;
+  }
+  .flow.stage2 { stroke: var(--future); stroke-dasharray: 4 5; }
+  @keyframes dashmove { to { stroke-dashoffset: -13; } }
+  @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+
+  aside.detail {
+    position: sticky; top: 64px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px;
+    min-height: 300px;
+    box-shadow: 0 4px 16px rgba(28,37,48,.06);
+  }
+  aside.detail h3 { font-size: 18px; margin-bottom: 4px; }
+  aside.detail .tagline { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
+  aside.detail dl { display: grid; gap: 12px; font-size: 14.5px; }
+  aside.detail dt {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--accent); font-weight: 700; margin-bottom: 2px;
+  }
+  aside.detail .badge {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; color: #fff;
+  }
+  .hint { color: var(--muted); font-size: 13px; margin-top: 18px; }
+
+  footer {
+    max-width: 1760px; margin: 0 auto; padding: 0 24px 40px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.detail { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="tabnav">
+  <a class="tabnav-link" href="index.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+    Проект
+  </a>
+  <a class="tabnav-link" href="schema.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+    Электрика
+  </a>
+  <a class="tabnav-link active" href="voda.html" aria-current="page">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>
+    Вода
+  </a>
+  <style>
+    /* svg-правило страницы схемы (min-width: 900px) не должно ломать иконки панели */
+    .tabnav svg {
+      min-width: 0 !important; width: 14px; height: 14px;
+      display: inline-block; flex: none;
+    }
+    .tabnav {
+      position: sticky; top: 0; z-index: 60;
+      display: flex; gap: 8px; padding: 10px 24px;
+      overflow-x: auto; scrollbar-width: none;
+      background: rgba(244,246,249,.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .tabnav-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 16px; border-radius: 999px;
+      font-size: 13.5px; font-weight: 600; text-decoration: none;
+      color: var(--muted); border: 1px solid transparent;
+      transition: color .2s, background .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .tabnav-link:hover { color: var(--ink); background: #fff; border-color: var(--line); }
+    .tabnav-link.active {
+      color: #fff; background: linear-gradient(135deg, #1c2530, #2c3a4d);
+      box-shadow: 0 3px 10px rgba(28,37,48,.25);
+    }
+    @media (max-width: 560px) {
+      .tabnav { padding: 8px 12px; }
+      .tabnav-link { padding: 6px 12px; font-size: 12.5px; }
+    }
+  </style>
+</nav>
+
+
+<header>
+  <h1>Схема ввода воды и водоподготовки дома</h1>
+  <p>Центральная сеть посёлка · гильза в ростверке · узел ввода на американках · коллекторная разводка PEX-a</p>
+</header>
+
+<div class="legend">
+  <span class="legend-item"><span class="chip chip-s1">Этап 1</span> предчистовая — узел ввода, байпас, гребёнки, лучи: монтируется сразу</span>
+  <span class="legend-item"><span class="chip chip-s2">Этап 2</span> чистовая — Neptun, колонны, фильтры, осмос: докупаются позже</span>
+</div>
+
+<section class="agenda">
+  <div class="agenda-inner">
+    <h2>Общая идея</h2>
+    <ol>
+      <li><b>Вода центральная, но «скважинная» по качеству.</b> Источник — посёлковая скважина через водонапорную башню: железо 3,3 мг/л (11× ПДК), марганец 0,2 (2×), жёсткость 7,2 °Ж. Водоподготовка обязательна, цепочка подобрана под лабораторный анализ и пересматривается по повторному после постоянного ввода.</li>
+      <li><b>Узел ввода — навсегда.</b> Грязевик → водомер → обратный клапан → редуктор с манометрами, всё на американках с местом под два электрокрана Neptun — на этапе 2 ничего не разбирается и не перепаивается.</li>
+      <li><b>Дренаж колонн — мимо септика.</b> Солевой регенерат умягчителя идёт в отдельный колодец промывок Ø315 у котельной: залповые солевые сливы угнетают биологию септика. Колодец — строго до отмостки, потом это перекоп.</li>
+      <li><b>Разводка коллекторная.</b> Гребёнки ХВС×2 + ГВС×1, от каждой — цельный луч PEX-a к точке: без скрытых соединений в стяжке, любая точка отключается на гребёнке. Полив отбирается до редуктора и до водоподготовки — полное давление, ресурс загрузок не жжётся.</li>
+    </ol>
+  </div>
+</section>
+
+<div class="layout">
+  <div class="scheme-card">
+    <svg viewBox="0 0 1520 1710" role="img" aria-label="Схема ввода воды и водоподготовки">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#9aa8b6"></path>
+        </marker>
+      </defs>
+
+      <!-- Зоны -->
+      <rect x="200" y="2" width="520" height="494" rx="16" fill="var(--z1-bg)" opacity="0.6"></rect>
+      <text x="216" y="24" font-size="14" font-weight="700" fill="var(--z1)">ВВОД С УЛИЦЫ (гильза в ростверке)</text>
+
+      <rect x="200" y="500" width="520" height="264" rx="16" fill="var(--z2-bg)" opacity="0.6"></rect>
+      <text x="216" y="522" font-size="14" font-weight="700" fill="var(--z2)">РЕГУЛИРОВКА ДАВЛЕНИЯ</text>
+
+      <rect x="200" y="796" width="520" height="620" rx="16" fill="var(--z3-bg)" opacity="0.6"></rect>
+      <text x="216" y="818" font-size="14" font-weight="700" fill="var(--z3)">ВОДОПОДГОТОВКА (этап 2 — цепочка под анализ воды)</text>
+
+      <rect x="200" y="1424" width="520" height="260" rx="16" fill="var(--z4-bg)" opacity="0.6"></rect>
+      <text x="216" y="1446" font-size="14" font-weight="700" fill="var(--z4)">РАЗДАЧА ПО ДОМУ (коллекторная)</text>
+
+      <!-- Магистраль -->
+      <path class="flow" d="M460 120 L460 148" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 240 L460 268" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 360 L460 388" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 480 L460 536" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 628 L460 656" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 748 L460 832" marker-end="url(#arrow)"></path>
+      <!-- Водоподготовка (этап 2) -->
+      <path class="flow stage2" d="M460 924 L460 952" marker-end="url(#arrow)"></path>
+      <path class="flow stage2" d="M460 1044 L460 1072" marker-end="url(#arrow)"></path>
+      <path class="flow stage2" d="M460 1164 L460 1192" marker-end="url(#arrow)"></path>
+      <path class="flow stage2" d="M460 1284 L460 1312" marker-end="url(#arrow)"></path>
+      <!-- Раздача -->
+      <path class="flow" d="M460 1404 L460 1456" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M460 1548 L460 1576" marker-end="url(#arrow)"></path>
+      <!-- Ответвления -->
+      <path class="flow stage2" d="M680 196 L982 196" marker-end="url(#arrow)"></path>
+      <path class="flow" d="M680 316 L982 316" marker-end="url(#arrow)"></path>
+      <path class="flow stage2" d="M680 1240 L982 1240" marker-end="url(#arrow)"></path>
+      <path class="flow stage2" d="M680 1504 L982 1504" marker-end="url(#arrow)"></path>
+
+      <!-- Узлы создаются скриптом -->
+      <g id="nodes"></g>
+    </svg>
+  </div>
+
+  <aside class="detail" id="detail" aria-live="polite">
+    <div class="hint">Кликните по узлу схемы — здесь появятся детали: что это, зачем нужно, наименование и размеры.</div>
+  </aside>
+  <noscript>
+    <p style="padding:16px 24px;color:#b3261e;font-weight:600;">
+      Для интерактивной схемы нужен включённый JavaScript — без него узлы схемы не отрисуются.
+    </p>
+  </noscript>
+</div>
+
+<footer>
+  Схема носит проектный характер — перед реализацией сверяйтесь с требованиями водоканала и действующими СП. Оборудование водоподготовки уточняется по повторному расширенному анализу воды после подключения постоянного ввода.
+</footer>
+
+<script>
+const NODES = [
+  // --- Ввод с улицы ---
+  { id:1, x:460, y:76, w:440, zone:"z1", stage:1,
+    title:"Гильза ввода воды",
+    tag:"Закладная в ростверке",
+    short:"Постоянный ввод ПНД от центральной сети через герметичную гильзу в ростверке",
+    name:"Гильза ввода воды через ростверк + трасса ПНД от точки подключения (что входит в работы по подключению — уточнить у водоканала)",
+    spec:"Закладывается на этапе 1, даже если водоканал подключит позже — потом это перекоп у ростверка.",
+    why:"Сейчас в дом заведён только временный ввод шлангом. Гильза и трасса — классическая закладная: копейки сейчас, дорого и грязно потом." },
+  { id:2, x:460, y:196, w:440, zone:"z1", stage:1,
+    title:"Вводной шаровый кран",
+    tag:"Ручное перекрытие + место под автоматику",
+    short:"Первый кран на вводе; узел дальше собирается на американках с местом под врезку двух электрокранов Neptun",
+    name:"Шаровый кран на вводе ХВС; далее — узел на американках с местом под 2 электрокрана Neptun (узел 14)",
+    spec:"Американки — чтобы при установке Neptun на этапе 2 ничего не разбирать и не перепаивать.",
+    why:"Пока Neptun не установлен, вводной кран закрывается на время отъезда: дом топится, но без подпитки отопления и без ГВС." },
+  { id:3, x:460, y:316, w:440, zone:"z1", stage:1,
+    title:"Грязевик",
+    tag:"Фильтр грубой очистки",
+    short:"Косой фильтр «ушком» вниз — песок и ржавчина до водомера и редуктора",
+    name:"Фильтр косой Valtec VT.192.N 1\"",
+    spec:"Редуктор без грязевика перед собой быстро выходит из строя.",
+    why:"Сразу после грязевика — тройник отбора полива (узел 15): до редуктора и до водоподготовки." },
+  { id:4, x:460, y:436, w:440, zone:"z1", stage:1,
+    title:"Водомер + кран после него",
+    tag:"Коммерческий учёт",
+    short:"Ставит и опломбирует водоканал посёлка — в смету не входит; место и врезки готовим на этапе 1",
+    name:"Водомер по требованиям водоканала + шаровый кран после него",
+    spec:"Сам прибор — водоканал при подключении; наша часть — место, врезки и кран после него.",
+    why:"Положение водомера определяет границу ответственности: до него — сеть посёлка, после — наш узел." },
+
+  // --- Регулировка давления ---
+  { id:5, x:460, y:584, w:440, zone:"z2", stage:1,
+    title:"Обратный клапан",
+    tag:"Защита от обратного тока",
+    short:"Не даёт воде уйти из дома обратно в сеть при падении давления",
+    name:"Обратный клапан Valtec VT.151.N 1\"",
+    spec:"Ставится после водомера, до редуктора.",
+    why:"Система дома (котёл, БКН, водоподготовка) не должна «срываться» обратно в посёлковую сеть." },
+  { id:6, x:460, y:704, w:440, zone:"z2", stage:1,
+    title:"Редуктор давления 3/4\"",
+    tag:"Стабильное давление",
+    short:"Гасит скачки давления сети; манометры до и после редуктора",
+    name:"Редуктор давления Valtec VT.087.N 3/4\" + 2 манометра (до и после)",
+    spec:"Версия 3/4\", а не 1/2\": Kvs 1/2\" ≈ 1,6 м³/ч — на грани пикового разбора дома.",
+    why:"Давление в центральной сети гуляет по времени суток; без манометров редуктор не настроить, а падение давления не диагностировать." },
+
+  // --- Водоподготовка ---
+  { id:7, x:460, y:880, w:440, zone:"z3", stage:1,
+    title:"Байпас водоподготовки",
+    tag:"3 крана: до / после / обход",
+    short:"Обводная линия вокруг всей цепочки: при обслуживании колонн дом не остаётся без воды",
+    name:"Байпас с тремя шаровыми кранами + обвязка колонн с кранами (этап 1)",
+    spec:"На этапе 1 вода идёт напрямую через байпас; колонны (узлы 8–11) встают в готовую обвязку на этапе 2 без переделок. Розетки под автоматику колонн — тоже этап 1.",
+    why:"Замена картриджей, засыпка загрузок, ремонт клапанов — всё делается с водой в доме: пошёл в обход и живёшь дальше." },
+  { id:8, x:460, y:1000, w:440, zone:"z3", stage:2,
+    title:"Мехфильтр Big Blue 20\"",
+    tag:"Первая ступень очистки",
+    short:"Картриджный фильтр: песок, ржавчина, муть — защита колонн",
+    name:"Корпус Big Blue 20\" 1\" с кронштейном + картридж механической очистки",
+    spec:"Мутность по анализу 2,5 ЕМФ при ПДК 2,6 — на грани, мехфильтр обязателен.",
+    why:"Дешёвая ступень берёт на себя грубую грязь — дорогие загрузки колонн живут дольше." },
+  { id:9, x:460, y:1120, w:440, zone:"z3", stage:2,
+    title:"Аэрация + обезжелезиватель 1044",
+    tag:"Железо 3,3 мг/л — 11× ПДК",
+    short:"Окисление и удаление железа и марганца, колонна 1044 с клапаном Runxin F67B",
+    name:"Обезжелезиватель 1044 + клапан Runxin F67B + загрузка (сборка); аэрация считаем обязательной (или загрузка типа МЖФ — решать по повторному анализу)",
+    spec:"Железо 3,3 мг/л (11× ПДК) и марганец 0,2 (2×) при pH 7,0 — на границе возможностей каталитических загрузок без аэрации. Марганец эффективно удаляется при pH ≥ 8 — возможна докорректировка pH, решать по повторному анализу.",
+    why:"Главная проблема нашей воды. Дренаж промывок — в колодец промывок (узел 16): бессолевая промывка допустима и в канализацию через воронку с разрывом струи, но по умолчанию — в колодец." },
+  { id:10, x:460, y:1240, w:440, zone:"z3", stage:2,
+    title:"Умягчитель 1044 + солевой бак",
+    tag:"Жёсткость 7,2 °Ж",
+    short:"Ионообменная смола, регенерация солью — защита котла, БКН и сантехники от накипи",
+    name:"Умягчитель 1044 + клапан Runxin F65P + солевой бак",
+    spec:"Жёсткость 7,2 °Ж при норме 7,0 — умягчение нужно, регенерации частые. Солевой регенерат — мимо септика, в колодец промывок (узел 16).",
+    why:"Накипь убивает ТЭНы котла и тёплые полы — при электрокотле на отоплении умягчение не опция, а защита главной инвестиции." },
+  { id:11, x:460, y:1360, w:440, zone:"z3", stage:2,
+    title:"Угольный фильтр Big Blue 20\"",
+    tag:"Финишная ступень",
+    short:"Убирает затхлый запах и привкус перед раздачей по дому",
+    name:"Корпус Big Blue 20\" + угольный картридж",
+    spec:"Запах по анализу 1 балл (норма), но характер затхлый — косвенный намёк на сероводород/органику; пересдать расширенный анализ после постоянного ввода.",
+    why:"Полировка воды после колонн; картридж — расходник, меняется по мере исчерпания." },
+
+  // --- Раздача ---
+  { id:12, x:460, y:1504, w:440, zone:"z4", stage:1,
+    title:"Гребёнки ХВС×2 + ГВС×1",
+    tag:"Коллекторная разводка",
+    short:"Три гребёнки с шаровыми кранами: каждая точка отключается отдельно",
+    name:"Гребёнки STOUT 3/4\"×1/2\", 4 выхода — ХВС×2 + ГВС×1 (3 шт.)",
+    spec:"STOUT выпускает максимум 4 выхода — при нехватке гребёнки стыкуются.",
+    why:"Коллекторная схема: нет скрытых соединений в стяжке, одинаковое давление, точка отключается на гребёнке." },
+  { id:13, x:460, y:1624, w:440, zone:"z4", stage:1,
+    title:"Лучи PEX-a к точкам",
+    tag:"Разводка до стяжки и штукатурки",
+    short:"От гребёнок к каждой точке своя линия PEX-a 20×2,8 в изоляции; магистрали — PEX-a 25×3,5",
+    name:"Труба PEX-a 20×2,8 (лучи, ~150 м) и 25×3,5 (магистрали, ~30 м), изоляция Энергофлекс Super Protect",
+    spec:"Отдельные точки: подвод 1/2\" к станции робота-пылесоса (набор чистой воды без рук), кран полива на фасаде (незамерзающий, узел 15). Маркировка концов на гребёнках — обязательна до закрытия.",
+    why:"PEX гибкий и при замерзании не рвётся; цельный луч без соединений в стяжке — нечему течь." },
+
+  // --- Ответвления ---
+  { id:14, x:1180, y:196, w:380, zone:"z1", stage:2,
+    title:"Защита от протечек Neptun",
+    tag:"Этап 2 · место готово на этапе 1",
+    short:"Два шаровых крана с электроприводом на вводе ХВС + контроллер + 6 проводных датчиков",
+    name:"Neptun Bugatti — при покупке брать версию 3/4\" (Base 1/2\" станет узким местом магистрали)",
+    spec:"Врезка сразу за ручным вентилем (узел 2) — место на американках готово. Розетка контроллера и кабели UTP cat5e к 6 датчикам (котельная у трапа, колонн и котла; стиралка/сушилка; посудомойка; под мойкой; санузлы) — этап 1.",
+    why:"Проводные датчики надёжнее радиодатчиков на батарейках, но кабель после чистовой отделки не протянуть. При утечке краны перекрывают весь дом за секунды." },
+  { id:15, x:1180, y:316, w:380, zone:"z1", stage:1,
+    title:"Отбор полива",
+    tag:"До редуктора и до водоподготовки",
+    short:"Тройник сразу после грязевика: полив без очистки и с полным сетевым давлением",
+    name:"Тройник после грязевика → незамерзающий кран на фасаде + закладная ПНД к будущей бане",
+    spec:"Кран незамерзающего типа: уклон наружу, зимой открыт снаружи и перекрыт изнутри; трасса ниже глубины промерзания либо с уклоном на самослив и краном продувки в тёплой зоне.",
+    why:"Полив через обезжелезиватель и умягчитель впустую жжёт ресурс загрузок и соль, а редуктор задушил бы давление." },
+  { id:16, x:1180, y:1240, w:380, zone:"z3", stage:2,
+    title:"Колодец промывок Ø315",
+    tag:"Дренаж колонн · ⚠️ не позже отмостки",
+    short:"Солевой регенерат умягчителя и промывки колонн — мимо септика, в отдельный колодец у котельной",
+    name:"Приёмный колодец Ø315×1000 у котельной (новый — не путать с колодцем после септика) + закладная труба от котельной (этап 1)",
+    spec:"Залповый сброс септика Евролос Про 5 по паспорту — 440 л, цикл промывки колонны 1044 — ориентировочно 200–500 л: на границе. Сам колодец — этап 2, но строго до отмостки: потом это перекоп.",
+    why:"Залповые солевые сливы угнетают биологию септика. В канализацию — только если по факту объёмы промывок окажутся заметно ниже 440 л или промывку получится растянуть по времени в настройках клапана." },
+  { id:17, x:1180, y:1504, w:380, zone:"z4", stage:2,
+    title:"Осмос под мойкой",
+    tag:"Питьевая вода",
+    short:"Обратный осмос на питьё — отдельным краном на кухне",
+    name:"Гейзер Аллегро М (пластиковый бак)",
+    spec:"Минерализация 246 мг/л — низкая, осмосу легко. Подключается к гребёнке ХВС (узел 12) на этапе 2.",
+    why:"Осмос — только на питьевой контур: гонять через него всю воду дома медленно и бессмысленно." },
+];
+
+const ZONES = {
+  z1: { fill:"#2f5f8f", label:"Ввод" },
+  z2: { fill:"#7a5fa0", label:"Давление" },
+  z3: { fill:"#0e7c86", label:"Водоподготовка" },
+  z4: { fill:"#1e7a5a", label:"Раздача" },
+};
+
+const STAGES = {
+  1: { label:"Этап 1", fill:"#2563eb" },  // предчистовая: монтаж сразу
+  2: { label:"Этап 2", fill:"#7d8894" },  // чистовая: докупка позже
+};
+
+const svgNS = "http://www.w3.org/2000/svg";
+const g = document.getElementById("nodes");
+const BOX_H = 88;
+
+function wrap(text, max) {
+  const words = text.split(" ");
+  const lines = []; let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > max) { lines.push(cur.trim()); cur = w; }
+    else cur += " " + w;
+  }
+  if (cur.trim()) lines.push(cur.trim());
+  return lines;
+}
+
+NODES.forEach(n => {
+  const h = BOX_H;
+  const grp = document.createElementNS(svgNS, "g");
+  grp.setAttribute("class", "node");
+  grp.dataset.id = n.id;
+  grp.setAttribute("tabindex", "0");
+  grp.setAttribute("role", "button");
+  grp.setAttribute("aria-label", n.id + ". " + n.title);
+
+  const rect = document.createElementNS(svgNS, "rect");
+  rect.setAttribute("class", "box");
+  rect.setAttribute("x", n.x - n.w/2);
+  rect.setAttribute("y", n.y - h/2);
+  rect.setAttribute("width", n.w);
+  rect.setAttribute("height", h);
+  rect.setAttribute("rx", 12);
+  rect.setAttribute("fill", n.stage === 2 ? "#f1f4f8" : "#ffffff");
+  rect.setAttribute("stroke", ZONES[n.zone].fill);
+  rect.setAttribute("stroke-width", 2);
+  if (n.stage === 2) rect.setAttribute("stroke-dasharray", "6 4");
+  grp.appendChild(rect);
+
+  const stage = STAGES[n.stage];
+  const badgeX = n.x + n.w/2 - 64;
+  const badgeY = n.y - h/2 + 7;
+  const stageBadge = document.createElementNS(svgNS, "rect");
+  stageBadge.setAttribute("x", badgeX);
+  stageBadge.setAttribute("y", badgeY);
+  stageBadge.setAttribute("width", 56);
+  stageBadge.setAttribute("height", 17);
+  stageBadge.setAttribute("rx", 8.5);
+  stageBadge.setAttribute("fill", n.stage === 2 ? "#ffffff" : stage.fill);
+  if (n.stage === 2) {
+    stageBadge.setAttribute("stroke", stage.fill);
+    stageBadge.setAttribute("stroke-width", 1.2);
+    stageBadge.setAttribute("stroke-dasharray", "3 2");
+  }
+  grp.appendChild(stageBadge);
+
+  const stageText = document.createElementNS(svgNS, "text");
+  stageText.setAttribute("x", badgeX + 28);
+  stageText.setAttribute("y", badgeY + 12);
+  stageText.setAttribute("text-anchor", "middle");
+  stageText.setAttribute("font-size", "10");
+  stageText.setAttribute("font-weight", "700");
+  stageText.setAttribute("fill", n.stage === 2 ? stage.fill : "#ffffff");
+  stageText.textContent = stage.label;
+  grp.appendChild(stageText);
+
+  const badge = document.createElementNS(svgNS, "circle");
+  badge.setAttribute("cx", n.x - n.w/2 + 26);
+  badge.setAttribute("cy", n.y - h/2 + 27);
+  badge.setAttribute("r", 17);
+  badge.setAttribute("fill", ZONES[n.zone].fill);
+  grp.appendChild(badge);
+
+  const num = document.createElementNS(svgNS, "text");
+  num.setAttribute("class", "num");
+  num.setAttribute("x", n.x - n.w/2 + 26);
+  num.setAttribute("y", n.y - h/2 + 33);
+  num.setAttribute("text-anchor", "middle");
+  num.setAttribute("font-size", "16");
+  num.setAttribute("fill", "#ffffff");
+  num.textContent = n.id;
+  grp.appendChild(num);
+
+  const title = document.createElementNS(svgNS, "text");
+  title.setAttribute("x", n.x - n.w/2 + 52);
+  title.setAttribute("y", n.y - h/2 + 33);
+  title.setAttribute("font-size", "17");
+  title.setAttribute("font-weight", "700");
+  title.setAttribute("fill", "#1c2530");
+  title.textContent = n.title;
+  grp.appendChild(title);
+
+  const subLines = wrap(n.short, Math.max(16, Math.floor((n.w - 84) / 7.3))).slice(0, 2);
+  subLines.forEach((line, i) => {
+    const sub = document.createElementNS(svgNS, "text");
+    sub.setAttribute("x", n.x - n.w/2 + 52);
+    sub.setAttribute("y", n.y - h/2 + 55 + i*17);
+    sub.setAttribute("font-size", "13");
+    sub.setAttribute("fill", "#5b6b7d");
+    sub.textContent = line;
+    grp.appendChild(sub);
+  });
+
+  grp.addEventListener("click", () => select(n.id, true));
+  grp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(n.id, true); }
+  });
+  g.appendChild(grp);
+});
+
+function select(id, byUser) {
+  document.querySelectorAll(".node").forEach(el => el.classList.remove("selected"));
+  const el = document.querySelector(`.node[data-id="${id}"]`);
+  if (el) el.classList.add("selected");
+  const n = NODES.find(v => v.id === id);
+  const z = ZONES[n.zone];
+  document.getElementById("detail").innerHTML = `
+    <span class="badge" style="background:${z.fill}">${n.id} · ${z.label}</span><span class="badge" style="background:${STAGES[n.stage].fill}; margin-left:6px">${STAGES[n.stage].label}</span>
+    <h3>${n.title}</h3>
+    <div class="tagline">${n.tag}</div>
+    <dl>
+      <div><dt>Что это и зачем</dt><dd>${n.short}</dd></div>
+      <div><dt>Наименование</dt><dd>${n.name}</dd></div>
+      <div><dt>Номиналы / размеры</dt><dd>${n.spec}</dd></div>
+      <div><dt>Почему так</dt><dd>${n.why}</dd></div>
+    </dl>
+    <div class="hint">Клик по другому узлу — следующие детали.</div>`;
+  if (byUser && window.innerWidth <= 980) {
+    document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+// Стартовый выбор — главная проблема воды
+select(9);
+</script>
+</body>
+</html>
